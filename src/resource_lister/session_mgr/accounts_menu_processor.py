@@ -20,7 +20,7 @@ def configure_master_arn_config():
     account_config_util.upsert_master_account(input_json)
     # Print statement to print output to command prompt
     print("Master Account configured succesfully.")
-    process_cfn_template()
+    #process_cfn_template()
 
 
 def process_master_account():
@@ -37,7 +37,7 @@ def process_master_account():
     account_config_util.upsert_master_account(input_json)
     # Print statement to print output to command prompt
     print("Master Account updated succesfully")
-    process_cfn_template()
+    #process_cfn_template()
 
 
 def process_cfn_template():
