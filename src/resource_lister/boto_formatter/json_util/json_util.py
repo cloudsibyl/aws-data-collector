@@ -219,7 +219,8 @@ def get_output_path():
     Return the path to the /tmp directory where Lambda is allowed to write files.
     :return: /tmp as the output path
     """
-    return '/tmp'
+    dir_path = os.getenv("OUTPUT_PATH")
+    return dir_path
 
 def get_file_path(service_name, function_name, dir_path, file_type):
     """
