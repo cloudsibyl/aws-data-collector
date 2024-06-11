@@ -113,8 +113,12 @@ class AccountConfig():
         try:
             dir_path = os.path.dirname(os.path.abspath(__file__))
             file_path = os.path.join(dir_path, AccountConfig.__CONFIG_FILE)
-            f = open(file_path)
-            __data = json.load(f)
+            # f = open(file_path)
+            # __data = json.load(f)
+
+            master_account_json = os.getenv("MASTER_ACCOUNT_JSON")
+            __data = json.loads(master_account_json)
+            
             AccountConfig.__master_account = __data["master_account"]
             if AccountConfig.__master_account["account_id"].strip() == "":
                 raise ValueError("Please configure Master Account")
@@ -139,7 +143,7 @@ class AccountConfig():
                         account_dict["IsMasterAcccount"] = False
                         AccountConfig.__accounts[account["account_id"]
                                                  ] = account_dict
-                f.close()
+                # f.close()
         except KeyError as err:
             logger.error(
                 "Please check aws_account_config.json file . File syntax is not correct.")

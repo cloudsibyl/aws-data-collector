@@ -67,8 +67,11 @@ def get_account_config_data() -> dict:
     """
     __data = dict()
     try:
-        f = open(get_file_path())
-        __data = json.load(f)
+        # f = open(get_file_path())
+        # __data = json.load(f)
+
+        master_account_json = os.getenv("MASTER_ACCOUNT_JSON")
+        __data = json.loads(master_account_json)
     except FileNotFoundError:
         logger.error("Account config {} is not found ".format(get_file_path()))
 
