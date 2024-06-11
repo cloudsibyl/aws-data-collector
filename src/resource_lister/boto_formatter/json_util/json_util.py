@@ -207,13 +207,20 @@ def print_csv_response(csv_data):
         print(csv_value)
 
 
+# def get_output_path():
+#     """
+#     :return: output_path
+#     """
+#     dir_path = os.path.dirname(os.path.abspath(__file__))
+#     return dir_path
+
 def get_output_path():
     """
-    :return: output_path
+    Return the path to the /tmp directory where Lambda is allowed to write files.
+    :return: /tmp as the output path
     """
-    dir_path = os.path.dirname(os.path.abspath(__file__))
+    dir_path = os.getenv("OUTPUT_PATH")
     return dir_path
-
 
 def get_file_path(service_name, function_name, dir_path, file_type):
     """
@@ -222,8 +229,9 @@ def get_file_path(service_name, function_name, dir_path, file_type):
     :param function_name like list_buckets
     :return: None
     """
-    if not os.path.exists(dir_path):
-        ValueError("Invalid Path to store the file  {}".format(dir_path))
+    # if not os.path.exists(dir_path):
+    #     ValueError("Invalid Path to store the file  {}".format(dir_path))
+    dir_path = get_output_path()
     current_date = datetime.datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
     file_name = "{}_{}_{}.{}".format(
         service_name, function_name, current_date, file_type)

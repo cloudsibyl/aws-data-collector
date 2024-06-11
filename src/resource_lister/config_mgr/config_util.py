@@ -35,8 +35,10 @@ class ConfigAttributes():
         """
 
         try:
-            f = open(ConfigAttributes.__get_file_path())
-            ConfigAttributes.__data = json.load(f)
+            # f = open(ConfigAttributes.__get_file_path())
+            # ConfigAttributes.__data = json.load(f)
+            config_attributes_json = os.getenv("CONFIG_ATTRIBUTES_JSON")
+            ConfigAttributes.__data = json.loads(config_attributes_json)
         except FileNotFoundError:
             logger.error(" config.json {} is not found ".format(
                 ConfigAttributes.__get_file_path()))
