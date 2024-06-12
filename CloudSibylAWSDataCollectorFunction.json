@@ -6,7 +6,7 @@
       "Type": "String",
       "Description": "The name of the Lambda function."
     },
-    "ECRRepositoryURI": {
+    "AWSDataCollectorImageURI": {
       "Type": "String",
       "Description": "The URI of the ECR repository (e.g., <account-id>.dkr.ecr.<region>.amazonaws.com/<repo-name>)"
     },
@@ -160,7 +160,7 @@
         "PackageType": "Image",
         "Code": {
           "ImageUri": {
-            "Fn::Sub": "${ECRRepositoryURI}:${ImageTag}"
+            "Fn::Sub": "${AWSDataCollectorImageURI}:${ImageTag}"
           }
         },
         "Environment": {
