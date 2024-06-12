@@ -2,6 +2,7 @@
 import os
 import sys
 import logging
+import argparse
 import resource_lister.util.setup as setup
 import resource_lister.menu.menu_util as menu_util
 import resource_lister.menu.batch_processing as batch_processing
@@ -23,6 +24,14 @@ To generate the list of AWS Resources Utility will make boto3  List API calls
 on configured accounts.These API calls will applied to your API Account Quotas.
 '''
 
+def setup_args():
+    parser = argparse.ArgumentParser(description='List AWS resources non-interactively.')
+    parser.add_argument('--service', type=str, required=True, help='AWS service name')
+    parser.add_argument('--option', type=int, required=True, help='Option number for the service')
+    parser.add_argument('--accounts', type=str, required=True, help='Comma separated account IDs or "ALL"')
+    parser.add_argument('--regions', type=str, required=False, help='Comma separated region names or "ALL"')
+    parser.add_argument('--output', type=str, required=True, help='Output type: print, file, or s3')
+    return parser.parse_args()
 
 
 def print_line():
@@ -62,14 +71,14 @@ def print_help():
     print("{}".format(get_menu_exit_seperator()))
 
 
-def process():
+def process(args):
     print_line()
     print_disclaimer()
     print_line()
     print_line()
     print_configure_utility()
     print_line()
-    process_input()
+    process_input(args)
 
 
 def print_configure_utility():
@@ -133,56 +142,83 @@ def process_help():
     process_input()
 
 
-def process_input():
-    menu_option = -999
-    while menu_option != 0:
-        try:
-            print_line()
-            process_config = None
-            print_menu_header("MENU [MAIN]")
-            input_value = input("Enter AWS service for help (help) for Exit(0) :-->").strip().lower()
-            if input_value == "help":
-                process_help()
-                break
-            # Exit option
-            elif input_value == "0":
-                menu_option = 0
-                break
-            else:
-                menu_list = menu_util.MenuData().search_menu_data(input_value)
-                # if invalid service selected menu_list would be None
-                if menu_list is None:
-                    print("Invalid service {} selected .Please try again with any of following services".format(
-                        input_value))
-                    menu_util.print_services()
-                    input("Please enter Any key to Continue -->")
-                else:
-                    # When exit key is press i.e -1 process config becomes None
-                    process_config = process_service_functions(
-                        menu_list, input_value)
-                    if process_config:
-                        process_config = process_accounts(process_config)
-                    if process_config:
-                        process_config = process_regions(process_config)
-                    if process_config:
-                        process_config = process_paginatio_attributes(
-                            process_config)
-                    if process_config:
-                        process_config["attributes"] = dict(menu_util.MenuData.get_attributes(
-                        ))
-                        core_processor.process(process_config)
-        except ValueError as e:
-            if str(e) == "Please configure Master Account":
-                print("Please configure Master Account")
+# def process_input():
+#     menu_option = -999
+#     while menu_option != 0:
+#         try:
+#             print_line()
+#             process_config = None
+#             print_menu_header("MENU [MAIN]")
+#             input_value = input("Enter AWS service for help (help) for Exit(0) :-->").strip().lower()
+#             if input_value == "help":
+#                 process_help()
+#                 break
+#             # Exit option
+#             elif input_value == "0":
+#                 menu_option = 0
+#                 break
+#             else:
+#                 menu_list = menu_util.MenuData().search_menu_data(input_value)
+#                 # if invalid service selected menu_list would be None
+#                 if menu_list is None:
+#                     print("Invalid service {} selected .Please try again with any of following services".format(
+#                         input_value))
+#                     menu_util.print_services()
+#                     input("Please enter Any key to Continue -->")
+#                 else:
+#                     # When exit key is press i.e -1 process config becomes None
+#                     process_config = process_service_functions(
+#                         menu_list, input_value)
+#                     if process_config:
+#                         process_config = process_accounts(process_config)
+#                     if process_config:
+#                         process_config = process_regions(process_config)
+#                     if process_config:
+#                         process_config = process_paginatio_attributes(
+#                             process_config)
+#                     if process_config:
+#                         process_config["attributes"] = dict(menu_util.MenuData.get_attributes(
+#                         ))
+#                         core_processor.process(process_config)
+#         except ValueError as e:
+#             if str(e) == "Please configure Master Account":
+#                 print("Please configure Master Account")
+
+def process_input(args):
+    args = setup_args()
+
+    service = args.service.lower()
+    if service == "help":
+        process_help()
+        return
+    elif service == "0":
+        return  # Exit the function if the service input is '0'
+    
+    menu_list = menu_util.MenuData().search_menu_data(service)
+    if not menu_list:
+        print(f"Invalid service {service} selected. Please try again with any of the following services:")
+        menu_util.print_services()
+        return
+    
+    # Process service functions with the selected option
+    process_config = process_service_functions(menu_list, service, str(args.option))
+    if process_config:
+        process_config = process_accounts(process_config, args.accounts)
+    if process_config and args.regions:
+        process_config = process_regions(process_config, args.regions)
+    if process_config:
+        process_config = process_paginatio_attributes(process_config)
+    if process_config:
+        process_config["attributes"] = dict(menu_util.MenuData.get_attributes())
+        core_processor.process(process_config)
 
 
-
-def process_service_functions(menu_list, input_value):
+def process_service_functions(menu_list, input_value, option_selected_value):
     in_process_service_functions = True
     process_config = None
     while in_process_service_functions:
         menu_util.print_menu_data(menu_list, input_value)
-        option_selected_value = input("Please enter option HERE-->").strip()
+        # option_selected_value = input("Please enter option HERE-->").strip()
         if option_selected_value == "-1":
             break
         else:
@@ -199,13 +235,14 @@ def process_service_functions(menu_list, input_value):
     return process_config
 
 
-def process_accounts(process_config):
+def process_accounts(process_config, accounts):
     in_process_accounts = True
 
     if process_config["is_multi_account_support"] == "yes":
         while in_process_accounts:
-            accounts = input(
-                "Please enter comma seperated account id(s) or ALL  HERE--> ").strip()
+            # accounts = input(
+            #     "Please enter comma seperated account id(s) or ALL  HERE--> ").strip()
+            accounts = accounts.strip()
             if accounts == "-1":
                 process_config = None
                 in_process_accounts = False
@@ -230,8 +267,9 @@ def process_accounts(process_config):
 
     else:
         while in_process_accounts:
-            account_selected = input(
-                "Please enter account id  HERE--> ").strip()
+            # account_selected = input(
+            #     "Please enter account id  HERE--> ").strip()
+            account_selected = accounts.strip()
             if account_selected == "-1":
                 process_config = None
                 break
@@ -251,12 +289,13 @@ def process_accounts(process_config):
     return process_config
 
 
-def process_regions(process_config):
+def process_regions(process_config, regions):
     in_process_regions = True
     if process_config["is_regional"] == "yes":
         while in_process_regions:
-            regions = input(
-                "Please enter comma seperated regions(s) or ALL  HERE--> ").strip()
+            # regions = input(
+            #     "Please enter comma seperated regions(s) or ALL  HERE--> ").strip()
+            regions = regions.strip()
             if regions == "-1":
                 process_config = None
                 in_process_regions = False
