@@ -1,0 +1,195 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Deploy a Docker-based Lambda function from ECR with read-only access to EC2, VPCs, subnets, and other infrastructure",
+  "Parameters": {
+    "FunctionName": {
+      "Type": "String",
+      "Description": "The name of the Lambda function."
+    },
+    "ECRRepositoryURI": {
+      "Type": "String",
+      "Description": "The URI of the ECR repository (e.g., <account-id>.dkr.ecr.<region>.amazonaws.com/<repo-name>)"
+    },
+    "ImageTag": {
+      "Type": "String",
+      "Default": "latest",
+      "Description": "The tag of the Docker image to use."
+    },
+    "S3BucketName": {
+      "Type": "String",
+      "Description": "The name of the S3 bucket to which the Lambda function should have write access."
+    }
+  },
+  "Resources": {
+    "LambdaExecutionRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "RoleName": {
+          "Fn::Sub": "${FunctionName}-execution-role"
+        },
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "LambdaBasicExecution",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogGroup",
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": "*"
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:PutObject",
+                    "s3:PutObjectAcl"
+                  ],
+                  "Resource": {
+                    "Fn::Sub": "arn:aws:s3:::${S3BucketName}/*"
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+								"ec2:DescribeInstances",
+								"ec2:DescribeVpcs",
+								"ec2:DescribeSubnets",
+								"ec2:DescribeSecurityGroups",
+								"ec2:DescribeRouteTables",
+								"ec2:DescribeNetworkAcls",
+								"ec2:DescribeInternetGateways",
+								"ec2:DescribeNatGateways",
+								"ec2:DescribeVpcEndpoints",
+								"ec2:DescribeVpnConnections",
+								"ec2:DescribeVpnGateways",
+								"ec2:DescribeCustomerGateways",
+								"ec2:DescribeVpcPeeringConnections",
+								"ec2:DescribeAddresses",
+								"ec2:DescribeVolumes",
+								"ec2:DescribeFlowLogs",
+								"ec2:DescribeSecurityGroupRules",
+								"ec2:DescribeSnapshots",
+								"ec2:DescribeTransitGateways",
+								"lambda:ListFunctions",
+								"lambda:ListLayers",
+								"s3:ListAllMyBuckets",
+								"s3:ListBucket",
+								"iam:ListRoles",
+								"iam:ListPolicies",
+								"iam:ListUsers",
+								"organizations:ListAccounts",
+								"organizations:ListPolicies",
+								"sns:ListSubscriptions",
+								"sns:ListTopics",
+								"sqs:ListQueues",
+								"rds:DescribeDBClusters",
+								"rds:DescribeDBInstances",
+								"rds:DescribeDBSnapshots",
+								"rds:DescribeDBSecurityGroups",
+								"rds:DescribeGlobalClusters",
+								"dynamodb:ListTables",
+								"ecs:ListClusters",
+								"ecs:ListServices",
+								"ecs:ListTasks",
+								"eks:ListClusters",
+								"eks:DescribeCluster",
+								"eks:ListFargateProfiles",
+								"elbv2:DescribeLoadBalancers",
+								"cloudfront:ListDistributions",
+								"cloudfront:ListFunctions",
+								"cloudwatch:ListDashboards",
+								"cloudwatch:ListMetrics",
+								"accessanalyzer:ListAnalyzers",
+								"accessanizer:ListFindings",
+								"budgets:DescribeBudgets",
+								"emr:ListClusters",
+								"emr:ListInstanceFleets",
+								"emr:ListNotebookExecutions",
+								"emr:ListStudioSessionMappings",
+								"route53:ListHostedZones",
+								"route53:ListResourceRecordSets",
+								"codecommit:ListRepositories",
+								"kms:ListKeys",
+								"redshift:DescribeClusters",
+								"redshift-serverless:ListNamespaces",
+								"redshift-serverless:ListWorkgroups",
+								"efs:DescribeFileSystems",
+								"sagemaker:ListDomains",
+								"sagemaker:ListImages",
+								"sagemaker:ListModelPackages",
+								"sagemaker:ListModels",
+								"sagemaker:ListProjects",
+								"sagemaker:ListUserProfiles"
+							],
+                  "Resource": "*"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "LambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "FunctionName"
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "LambdaExecutionRole",
+            "Arn"
+          ]
+        },
+        "PackageType": "Image",
+        "Code": {
+          "ImageUri": {
+            "Fn::Sub": "${ECRRepositoryURI}:${ImageTag}"
+          }
+        },
+        "Environment": {
+          "Variables": {
+            "s3_bucket": {
+              "Ref": "S3BucketName"
+            }
+          }
+        },
+        "Timeout": 900,
+        "MemorySize": 512
+      }
+    }
+  },
+  "Outputs": {
+    "LambdaFunctionName": {
+      "Description": "The name of the Lambda function",
+      "Value": {
+        "Ref": "LambdaFunction"
+      }
+    },
+    "LambdaFunctionArn": {
+      "Description": "The ARN of the Lambda function",
+      "Value": {
+        "Fn::GetAtt": [
+          "LambdaFunction",
+          "Arn"
+        ]
+      }
+    }
+  }
+}

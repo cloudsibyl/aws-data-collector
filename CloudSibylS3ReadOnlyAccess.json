@@ -1,0 +1,71 @@
+{
+    "Parameters": {
+        "CostUsageReportBucket": {
+            "Type": "String",
+            "Description": "The Bucket Name of the CUR"
+        },
+        "ExternalId": {
+            "Type": "String",
+            "Description": "CloudSibyl Provided External ID"
+        },
+        "CloudSibylAccountId": {
+            "Type": "String",
+            "Description": "The AWS Account ID of the CloudSibyl"
+        }
+    },
+    "Resources": {
+        "CloudSibylBillingAndMetricsReadOnlyRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "AWS": { "Ref": "CloudSibylAccountId" }
+                            },
+                            "Action": [
+                                "sts:AssumeRole"
+                            ],
+                            "Condition": {
+                                "StringEquals": {
+                                    "sts:ExternalId": { "Ref": "ExternalId" }
+                                }
+                            }
+                        }
+                    ]
+                },
+                "RoleName": "CloudSibylBillingAndMetricsReadOnlyRole",
+                "Path": "/",
+                "Policies": [
+                    {
+                        "PolicyName": "CostUsageReportBucketReadOnlyPolicy",
+                        "PolicyDocument": {
+                            "Version": "2012-10-17",
+                            "Statement": [
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "s3:GetObject",
+                                        "s3:ListBucket"
+                                    ],
+                                    "Resource": [
+                                        { "Fn::Sub": "arn:aws:s3:::${CostUsageReportBucket}" },
+                                        { "Fn::Sub": "arn:aws:s3:::${CostUsageReportBucket}/*" }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    "Outputs": {
+        "CloudSibylBillingAndMetricsReadOnlyRole": {
+            "Description": "The ARN of the CloudSibylBillingAndMetricsReadOnlyRole role",
+            "Value": { "Fn::GetAtt": ["CloudSibylBillingAndMetricsReadOnlyRole", "Arn"] }
+        }
+    }
+}
