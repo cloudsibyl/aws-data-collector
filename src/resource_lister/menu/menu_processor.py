@@ -276,6 +276,11 @@ def process_accounts(process_config, accounts):
             else:
                 account_list = menu_util.MenuData.get_account_list()
                 account_list_selected = []
+                # customized version: make first available accounts selected
+                if len(account_list) == 0 or account_list is None:
+                    raise ValueError('No account id to select')
+                account_selected = account_list[0]
+                # end of customization
                 account_list_selected.append(account_selected)
                 validated_account_list = validated_list_value(
                     account_list_selected, account_list)
