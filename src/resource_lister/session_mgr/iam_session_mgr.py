@@ -13,6 +13,7 @@ import logging
 from botocore.exceptions import ClientError
 from typing import List, Dict, Any, Optional, Sequence, Union, Callable, Set, \
     Iterator, TYPE_CHECKING, Tuple
+from ..util.load_config import load_account_config
 
 # Set up our logger
 logging.basicConfig(level=logging.INFO)
@@ -115,10 +116,7 @@ class AccountConfig():
             file_path = os.path.join(dir_path, AccountConfig.__CONFIG_FILE)
             # f = open(file_path)
             # __data = json.load(f)
-
-            master_account_json = os.getenv("MASTER_ACCOUNT_JSON")
-            __data = json.loads(master_account_json)
-            
+            __data = load_account_config()     
             AccountConfig.__master_account = __data["master_account"]
             if AccountConfig.__master_account["account_id"].strip() == "":
                 raise ValueError("Please configure Master Account")

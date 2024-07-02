@@ -4,6 +4,7 @@ This is supporting functions to update config.json
 import json
 import os
 import logging
+from ..util.load_config import load_config_attributes_json
 logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger()
 
@@ -37,8 +38,8 @@ class ConfigAttributes():
         try:
             # f = open(ConfigAttributes.__get_file_path())
             # ConfigAttributes.__data = json.load(f)
-            config_attributes_json = os.getenv("CONFIG_ATTRIBUTES_JSON")
-            ConfigAttributes.__data = json.loads(config_attributes_json)
+            # customized version
+            ConfigAttributes.__data = load_config_attributes_json()
         except FileNotFoundError:
             logger.error(" config.json {} is not found ".format(
                 ConfigAttributes.__get_file_path()))

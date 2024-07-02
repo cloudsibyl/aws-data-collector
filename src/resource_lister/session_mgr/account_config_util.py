@@ -1,7 +1,7 @@
 import json
 import os
 import logging
-
+from ..util.load_config import load_account_config
 
 # Set up our logger
 logging.basicConfig(level=logging.ERROR)
@@ -69,9 +69,7 @@ def get_account_config_data() -> dict:
     try:
         # f = open(get_file_path())
         # __data = json.load(f)
-
-        master_account_json = os.getenv("MASTER_ACCOUNT_JSON")
-        __data = json.loads(master_account_json)
+        __data = load_account_config()
     except FileNotFoundError:
         logger.error("Account config {} is not found ".format(get_file_path()))
 
