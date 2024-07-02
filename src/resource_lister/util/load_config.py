@@ -16,7 +16,7 @@ def load_account_config():
         master_account_json = json.load(f)
         account_id = str(os.getenv("account_id"))
         master_account_json["master_account"]["account_id"] = account_id
-        master_account_json["master_account"]["master_account_role_arn"] = f"arn:aws:iam::{account_id}:role/ResourceListerRole"
+        master_account_json["master_account"]["account_config_type"] = '1'
     except KeyError as err:
             logger.error(
                 "Please check account_config.json file path or env variables is not set correctly.")
