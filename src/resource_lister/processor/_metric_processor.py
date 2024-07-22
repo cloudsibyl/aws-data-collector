@@ -29,6 +29,11 @@ def process(process_config):
     elif metric_parameters["Namespace"] == "AWS/EBS":
         intances = get_volume_ids(accounts, regions)
         dimension_name = "VolumeId"
+    elif metric_parameters["Namespace"] == "AWS/ECS":
+        intances = get_cluster_names(accounts, regions)
+        dimension_name = "ClusterName"
+    else:
+        raise Exception("Namespace not supported")
 
     if intances:
         object_list = []
@@ -67,6 +72,43 @@ def fetch_instance_ids(session, region):
                 if len(instance_ids) >= 60:
                     return instance_ids
     return instance_ids
+
+def get_cluster_names(accounts, regions):
+    cluster_names = []
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        futures = []
+        for account in accounts:
+            for region in regions:
+                futures.append(executor.submit(fetch_cluster_names, SessionHandler.get_new_session(account), region))
+        
+        for future in concurrent.futures.as_completed(futures):
+            try:
+                result = future.result()
+                cluster_names.extend(result)
+                if len(cluster_names) >= 60:
+                    return cluster_names[:60]
+            except Exception as exc:
+                logger.error(exc)
+    return cluster_names[:60]
+
+def fetch_cluster_names(session, region):
+    ecs_client = session.client("ecs", config=Config(region_name=region))
+    paginator = ecs_client.get_paginator('list_clusters')
+    cluster_names = []
+
+    for page in paginator.paginate():
+        cluster_arns = page.get('clusterArns', [])
+        
+        for cluster_arn in cluster_arns:
+            # Describe the cluster to get its name
+            cluster_info = ecs_client.describe_clusters(clusters=[cluster_arn])
+            cluster = cluster_info['clusters'][0]
+            cluster_name = cluster['clusterName']
+            cluster_names.append(cluster_name)
+            if len(cluster_names) >= 60:
+                return cluster_names
+    
+    return cluster_names
 
 def get_volume_ids(accounts, regions):
     volume_ids = []

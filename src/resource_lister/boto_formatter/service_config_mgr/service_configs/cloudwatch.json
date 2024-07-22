@@ -196,6 +196,38 @@
                 "Timestamp": "string",
                 "Average": "string"
             }
+        },
+        {
+            "function_name": "CPUReservation",
+            "function_description": "CloudWatch CPUReservation Metric for Volumes",
+            "boto_session_type": "client",
+            "response_format": "FORMAT_2",
+            "function_type": "list",
+            "is_regional": "Yes",
+            "pagination_support": "Yes",
+            "result_keys": [
+                "Datapoints"
+            ],
+            "json_response": {
+                "Timestamp": "string",
+                "Average": "string"
+            }
+        },
+        {
+            "function_name": "MemoryReservation",
+            "function_description": "CloudWatch MemoryReservation Metric for Volumes",
+            "boto_session_type": "client",
+            "response_format": "FORMAT_2",
+            "function_type": "list",
+            "is_regional": "Yes",
+            "pagination_support": "Yes",
+            "result_keys": [
+                "Datapoints"
+            ],
+            "json_response": {
+                "Timestamp": "string",
+                "Average": "string"
+            }
         }
     ]
 }
