@@ -36,6 +36,166 @@
                 "Dimensions_0_Name": "string",
                 "Dimensions_0_Value": "string"
             }
+        },
+        {
+            "function_name": "CPUUtilization",
+            "function_description": "CloudWatch Metrics for EC2 Instances",
+            "boto_session_type": "client",
+            "response_format": "FORMAT_2",
+            "function_type": "list",
+            "is_regional": "Yes",
+            "pagination_support": "Yes",
+            "result_keys": [
+                "Datapoints"
+            ],
+            "json_response": {
+                "Timestamp": "string",
+                "Average": "string"
+            }
+        },
+        {
+            "function_name": "mem_used_percent",
+            "function_description": "CloudWatch MemoryUtilization Metric for EC2 Instances",
+            "boto_session_type": "client",
+            "response_format": "FORMAT_2",
+            "function_type": "list",
+            "is_regional": "Yes",
+            "pagination_support": "Yes",
+            "result_keys": [
+                "Datapoints"
+            ],
+            "json_response": {
+                "Timestamp": "string",
+                "Average": "string"
+            }
+        },
+        {
+            "function_name": "NetworkIn",
+            "function_description": "CloudWatch NetworkIn Metric for EC2 Instances",
+            "boto_session_type": "client",
+            "response_format": "FORMAT_2",
+            "function_type": "list",
+            "is_regional": "Yes",
+            "pagination_support": "Yes",
+            "result_keys": [
+                "Datapoints"
+            ],
+            "json_response": {
+                "Timestamp": "string",
+                "Average": "string"
+            }
+        },
+        {
+            "function_name": "NetworkOut",
+            "function_description": "CloudWatch NetworkOut Metric for EC2 Instances",
+            "boto_session_type": "client",
+            "response_format": "FORMAT_2",
+            "function_type": "list",
+            "is_regional": "Yes",
+            "pagination_support": "Yes",
+            "result_keys": [
+                "Datapoints"
+            ],
+            "json_response": {
+                "Timestamp": "string",
+                "Average": "string"
+            }
+        },
+        {
+            "function_name": "NetworkPacketsIn",
+            "function_description": "CloudWatch NetworkPacketsIn Metric for EC2 Instances",
+            "boto_session_type": "client",
+            "response_format": "FORMAT_2",
+            "function_type": "list",
+            "is_regional": "Yes",
+            "pagination_support": "Yes",
+            "result_keys": [
+                "Datapoints"
+            ],
+            "json_response": {
+                "Timestamp": "string",
+                "Average": "string"
+            }
+        },
+        {
+            "function_name": "NetworkPacketsOut",
+            "function_description": "CloudWatch NetworkPacketsOut Metric for EC2 Instances",
+            "boto_session_type": "client",
+            "response_format": "FORMAT_2",
+            "function_type": "list",
+            "is_regional": "Yes",
+            "pagination_support": "Yes",
+            "result_keys": [
+                "Datapoints"
+            ],
+            "json_response": {
+                "Timestamp": "string",
+                "Average": "string"
+            }
+        },
+        {
+            "function_name": "VolumeReadOps",
+            "function_description": "CloudWatch VolumeReadOps Metric for Volumes",
+            "boto_session_type": "client",
+            "response_format": "FORMAT_2",
+            "function_type": "list",
+            "is_regional": "Yes",
+            "pagination_support": "Yes",
+            "result_keys": [
+                "Datapoints"
+            ],
+            "json_response": {
+                "Timestamp": "string",
+                "Average": "string"
+            }
+        },
+        {
+            "function_name": "VolumeWriteOps",
+            "function_description": "CloudWatch VolumeWriteOps Metric for Volumes",
+            "boto_session_type": "client",
+            "response_format": "FORMAT_2",
+            "function_type": "list",
+            "is_regional": "Yes",
+            "pagination_support": "Yes",
+            "result_keys": [
+                "Datapoints"
+            ],
+            "json_response": {
+                "Timestamp": "string",
+                "Average": "string"
+            }
+        },
+        {
+            "function_name": "VolumeReadBytes",
+            "function_description": "CloudWatch VolumeReadBytes Metric for Volumes",
+            "boto_session_type": "client",
+            "response_format": "FORMAT_2",
+            "function_type": "list",
+            "is_regional": "Yes",
+            "pagination_support": "Yes",
+            "result_keys": [
+                "Datapoints"
+            ],
+            "json_response": {
+                "Timestamp": "string",
+                "Average": "string"
+            }
+        },
+        {
+            "function_name": "VolumeWriteBytes",
+            "function_description": "CloudWatch VolumeWriteBytes Metric for Volumes",
+            "boto_session_type": "client",
+            "response_format": "FORMAT_2",
+            "function_type": "list",
+            "is_regional": "Yes",
+            "pagination_support": "Yes",
+            "result_keys": [
+                "Datapoints"
+            ],
+            "json_response": {
+                "Timestamp": "string",
+                "Average": "string"
+            }
         }
     ]
 }
