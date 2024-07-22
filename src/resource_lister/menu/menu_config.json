@@ -784,6 +784,166 @@
             "validation_functions": ""
         },
         {
+            "menu_index": "cloudwatch_cpu_utilization_metric",
+            "menu_help": "CloudWatch CPUUtilization Metric for EC2 Instances",
+            "is_multi_account_support": "yes",
+            "is_regional": "yes",
+            "service_name": "cloudwatch",
+            "function_name": "CPUUtilization",
+            "implclass": "_metric_processor",
+            "implfunction": "process",
+            "validation_functions": "",
+            "metric_parameters": {
+                "Namespace": "AWS/EC2",
+                "Period": 300,
+                "Statistics": ["Average"]
+            }
+        },
+        {
+            "menu_index": "cloudwatch_memory_utilization_metric",
+            "menu_help": "CloudWatch MemoryUtilization Metric for EC2 Instances",
+            "is_multi_account_support": "yes",
+            "is_regional": "yes",
+            "service_name": "cloudwatch",
+            "function_name": "mem_used_percent",
+            "implclass": "_metric_processor",
+            "implfunction": "process",
+            "validation_functions": "",
+            "metric_parameters": {
+                "Namespace": "CWAgent",
+                "Period": 300,
+                "Statistics": ["Average"]
+            }
+        },
+        {
+            "menu_index": "cloudwatch_network_in_metric",
+            "menu_help": "CloudWatch NetworkIn Metric for EC2 Instances",
+            "is_multi_account_support": "yes",
+            "is_regional": "yes",
+            "service_name": "cloudwatch",
+            "function_name": "NetworkIn",
+            "implclass": "_metric_processor",
+            "implfunction": "process",
+            "validation_functions": "",
+            "metric_parameters": {
+                "Namespace": "AWS/EC2",
+                "Period": 300,
+                "Statistics": ["Average"]
+            }
+        },
+        {
+            "menu_index": "cloudwatch_network_out_metric",
+            "menu_help": "CloudWatch NetworkOut Metric for EC2 Instances",
+            "is_multi_account_support": "yes",
+            "is_regional": "yes",
+            "service_name": "cloudwatch",
+            "function_name": "NetworkOut",
+            "implclass": "_metric_processor",
+            "implfunction": "process",
+            "validation_functions": "",
+            "metric_parameters": {
+                "Namespace": "AWS/EC2",
+                "Period": 300,
+                "Statistics": ["Average"]
+            }
+        },
+        {
+            "menu_index": "cloudwatch_network_packets_in_metric",
+            "menu_help": "CloudWatch NetworkPacketsIn Metric for EC2 Instances",
+            "is_multi_account_support": "yes",
+            "is_regional": "yes",
+            "service_name": "cloudwatch",
+            "function_name": "NetworkPacketsIn",
+            "implclass": "_metric_processor",
+            "implfunction": "process",
+            "validation_functions": "",
+            "metric_parameters": {
+                "Namespace": "AWS/EC2",
+                "Period": 300,
+                "Statistics": ["Average"]
+            }
+        },
+        {
+            "menu_index": "cloudwatch_network_packets_out_metric",
+            "menu_help": "CloudWatch NetworkPacketsOut Metric for EC2 Instances",
+            "is_multi_account_support": "yes",
+            "is_regional": "yes",
+            "service_name": "cloudwatch",
+            "function_name": "NetworkPacketsOut",
+            "implclass": "_metric_processor",
+            "implfunction": "process",
+            "validation_functions": "",
+            "metric_parameters": {
+                "Namespace": "AWS/EC2",
+                "Period": 300,
+                "Statistics": ["Average"]
+            }
+        },
+        {
+            "menu_index": "cloudwatch_volume_read_ops_metric",
+            "menu_help": "CloudWatch VolumeReadOps Metric for Volumes",
+            "is_multi_account_support": "yes",
+            "is_regional": "yes",
+            "service_name": "cloudwatch",
+            "function_name": "VolumeReadOps",
+            "implclass": "_metric_processor",
+            "implfunction": "process",
+            "validation_functions": "",
+            "metric_parameters": {
+                "Namespace": "AWS/EBS",
+                "Period": 300,
+                "Statistics": ["Average"]
+            }
+        },
+        {
+            "menu_index": "cloudwatch_volume_write_ops_metric",
+            "menu_help": "CloudWatch VolumeWriteOps Metric for Volumes",
+            "is_multi_account_support": "yes",
+            "is_regional": "yes",
+            "service_name": "cloudwatch",
+            "function_name": "VolumeWriteOps",
+            "implclass": "_metric_processor",
+            "implfunction": "process",
+            "validation_functions": "",
+            "metric_parameters": {
+                "Namespace": "AWS/EBS",
+                "Period": 300,
+                "Statistics": ["Average"]
+            }
+        },
+        {
+            "menu_index": "cloudwatch_volume_read_bytes_metric",
+            "menu_help": "CloudWatch VolumeReadBytes Metric for Volumes",
+            "is_multi_account_support": "yes",
+            "is_regional": "yes",
+            "service_name": "cloudwatch",
+            "function_name": "VolumeReadBytes",
+            "implclass": "_metric_processor",
+            "implfunction": "process",
+            "validation_functions": "",
+            "metric_parameters": {
+                "Namespace": "AWS/EBS",
+                "Period": 300,
+                "Statistics": ["Average"]
+            }
+        },
+        {
+            "menu_index": "cloudwatch_volume_write_bytes_metric",
+            "menu_help": "CloudWatch VolumeWriteBytes Metric for Volumes",
+            "is_multi_account_support": "yes",
+            "is_regional": "yes",
+            "service_name": "cloudwatch",
+            "function_name": "VolumeWriteBytes",
+            "implclass": "_metric_processor",
+            "implfunction": "process",
+            "validation_functions": "",
+            "metric_parameters": {
+                "Namespace": "AWS/EBS",
+                "Period": 300,
+                "Statistics": ["Average"]
+            }
+        },
+        {
             "menu_index": "efs_describe_file_systems",
             "menu_help": "List of EFS",
             "is_multi_account_support": "yes",
