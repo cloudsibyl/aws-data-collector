@@ -944,6 +944,38 @@
             }
         },
         {
+            "menu_index": "cloudwatch_cpu_reservation_metric",
+            "menu_help": "CloudWatch CPUReservation Metric for Volumes",
+            "is_multi_account_support": "yes",
+            "is_regional": "yes",
+            "service_name": "cloudwatch",
+            "function_name": "CPUReservation",
+            "implclass": "_metric_processor",
+            "implfunction": "process",
+            "validation_functions": "",
+            "metric_parameters": {
+                "Namespace": "AWS/ECS",
+                "Period": 300,
+                "Statistics": ["Average"]
+            }
+        },
+        {
+            "menu_index": "cloudwatch_memory_reservation_metric",
+            "menu_help": "CloudWatch MemoryReservation Metric for Volumes",
+            "is_multi_account_support": "yes",
+            "is_regional": "yes",
+            "service_name": "cloudwatch",
+            "function_name": "MemoryReservation",
+            "implclass": "_metric_processor",
+            "implfunction": "process",
+            "validation_functions": "",
+            "metric_parameters": {
+                "Namespace": "AWS/ECS",
+                "Period": 300,
+                "Statistics": ["Average"]
+            }
+        },
+        {
             "menu_index": "efs_describe_file_systems",
             "menu_help": "List of EFS",
             "is_multi_account_support": "yes",
