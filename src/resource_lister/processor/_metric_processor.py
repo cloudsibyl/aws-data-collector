@@ -23,7 +23,7 @@ def process(process_config):
         pagination_attributes = process_config["pagination_attributes"]
 
     object_list = []
-    if metric_parameters["Namespace"] == "AWS/EC2":
+    if metric_parameters["Namespace"] == "AWS/EC2" or metric_parameters["Namespace"] == "CWAgent":
         intances = get_instance_ids(accounts, regions)
         dimension_name = "InstanceId"
     elif metric_parameters["Namespace"] == "AWS/EBS":
