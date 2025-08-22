@@ -8,7 +8,7 @@
     },
     "AWSDataCollectorImageURI": {
       "Type": "String",
-	  "Default": "211125298167.dkr.ecr.ca-central-1.amazonaws.com/my-test-lambda-function",
+      "Default": "767397677341.dkr.ecr.ca-central-1.amazonaws.com/cloudsibyl-aws-data-collector",
       "Description": "The URI of the CloudSibyl ECR repository"
     },
     "ImageTag": {
@@ -19,23 +19,100 @@
     "S3BucketName": {
       "Type": "String",
       "Description": "The name of the S3 bucket to which the Lambda function should have write access."
+    },
+    "ScheduleHour": {
+      "Type": "Number",
+      "Default": 21,
+      "Description": "The hour of day (UTC) to run the Lambda function (0-23)."
+    },
+    "EnableCPUUtilization": {
+      "Type": "String",
+      "AllowedValues": ["true", "false"],
+      "Default": "false",
+      "Description": "Enable CPU Utilization"
+    },
+    "EnableMemoryUtilization": {
+      "Type": "String",
+      "AllowedValues": ["true", "false"],
+      "Default": "false",
+      "Description": "Enable Memory Utilization"
+    },
+    "EnableCPUReservation": {
+      "Type": "String",
+      "AllowedValues": ["true", "false"],
+      "Default": "false",
+      "Description": "Enable CPU Reservation"
+    },
+    "EnableMemoryReservation": {
+      "Type": "String",
+      "AllowedValues": ["true", "false"],
+      "Default": "false",
+      "Description": "Enable Memory Reservation"
+    },
+    "EnableNetworkUtilization": {
+      "Type": "String",
+      "AllowedValues": ["true", "false"],
+      "Default": "false",
+      "Description": "Enable Network Utilization"
+    },
+    "EnableVolumeIOPS": {
+      "Type": "String",
+      "AllowedValues": ["true", "false"],
+      "Default": "false",
+      "Description": "Enable Volume IOPS"
+    },
+    "EnableVolumeThroughput": {
+      "Type": "String",
+      "AllowedValues": ["true", "false"],
+      "Default": "false",
+      "Description": "Enable Volume Throughput"
+    },
+    "EnableCarbonFootprint": {
+      "Type": "String",
+      "AllowedValues": ["true", "false"],
+      "Default": "false",
+      "Description": "Enable carbon footprint data collection on the last day of each month."
+    },
+    "EnableCloudFormation": {
+      "Type": "String",
+      "AllowedValues": ["true", "false"],
+      "Default": "false",
+      "Description": "Enable collecting cloudFormation data."
+    }
+  },
+  "Conditions": {
+    "EnableCarbonFootprintCondition": {"Fn::Equals": [{"Ref": "EnableCarbonFootprint"}, "true"]},
+    "EnableCloudFormationCondition": {"Fn::Equals": [{"Ref": "EnableCloudFormation"}, "true"]},
+    "EnableCPUUtilizationCondition": {"Fn::Equals": [{"Ref": "EnableCPUUtilization"}, "true"]},
+    "EnableMemoryUtilizationCondition": {"Fn::Equals": [{"Ref": "EnableMemoryUtilization"}, "true"]},
+    "EnableCPUReservationCondition": {"Fn::Equals": [{"Ref": "EnableCPUReservation"}, "true"]},
+    "EnableMemoryReservationCondition": {"Fn::Equals": [{"Ref": "EnableMemoryReservation"}, "true"]},
+    "EnableNetworkUtilizationCondition": {"Fn::Equals": [{"Ref": "EnableNetworkUtilization"}, "true"]},
+    "EnableVolumeIOPSCondition": {"Fn::Equals": [{"Ref": "EnableVolumeIOPS"}, "true"]},
+    "EnableVolumeThroughputCondition": {"Fn::Equals": [{"Ref": "EnableVolumeThroughput"}, "true"]},
+    "AddCloudWatchPermission": {
+      "Fn::Or": [
+        {"Condition": "EnableCPUUtilizationCondition"},
+        {"Condition": "EnableMemoryUtilizationCondition"},
+        {"Condition": "EnableNetworkUtilizationCondition"},
+        {"Condition": "EnableCPUReservationCondition"},
+        {"Condition": "EnableMemoryReservationCondition"},
+        {"Condition": "EnableVolumeIOPSCondition"},
+        {"Condition": "EnableVolumeThroughputCondition"}
+      ]
     }
   },
   "Resources": {
     "LambdaExecutionRole": {
       "Type": "AWS::IAM::Role",
       "Properties": {
-        "RoleName": {
-          "Fn::Sub": "${FunctionName}-execution-role"
-        },
+        "RoleName": {"Fn::Sub": "${FunctionName}-execution-role"},
         "AssumeRolePolicyDocument": {
           "Version": "2012-10-17",
           "Statement": [
             {
               "Effect": "Allow",
-              "Principal": {
-                "Service": "lambda.amazonaws.com"
-              },
+              "Principal": {"Service": "lambda.amazonaws.com"},
               "Action": "sts:AssumeRole"
             }
           ]
@@ -51,93 +128,71 @@
                   "Action": [
                     "logs:CreateLogGroup",
                     "logs:CreateLogStream",
-                    "logs:PutLogEvents"
-                  ],
-                  "Resource": "*"
-                },
-                {
-                  "Effect": "Allow",
-                  "Action": [
+                    "logs:PutLogEvents",
                     "s3:PutObject",
-                    "s3:PutObjectAcl"
+                    "s3:PutObjectAcl",
+                    "ec2:Describe*",
+                    "lambda:ListFunctions",
+                    "lambda:ListLayers",
+                    "s3:ListAllMyBuckets",
+                    "s3:ListBucket",
+                    "organizations:ListAccounts",
+                    "organizations:ListPolicies",
+                    "sns:ListSubscriptions",
+                    "sns:ListTopics",
+                    "sqs:ListQueues",
+                    "rds:Describe*",
+                    "dynamodb:ListTables",
+                    "ecs:ListClusters",
+                    "ecs:ListServices",
+                    "ecs:ListTasks",
+                    "eks:ListClusters",
+                    "eks:DescribeCluster",
+                    "eks:ListFargateProfiles",
+                    "elbv2:DescribeLoadBalancers",
+                    "cloudfront:ListDistributions",
+                    "cloudfront:ListFunctions",
+                    "cloudwatch:ListDashboards",
+                    "cloudwatch:ListMetrics",
+                    "accessanizer:ListFindings",
+                    "emr:ListClusters",
+                    "emr:ListInstanceFleets",
+                    "emr:ListNotebookExecutions",
+                    "emr:ListStudioSessionMappings",
+                    "route53:ListHostedZones",
+                    "route53:ListResourceRecordSets",
+                    "codecommit:ListRepositories",
+                    "redshift:DescribeClusters",
+                    "redshift-serverless:ListNamespaces",
+                    "redshift-serverless:ListWorkgroups",
+                    "efs:DescribeFileSystems",
+                    "sagemaker:ListDomains",
+                    "sagemaker:ListImages",
+                    "sagemaker:ListModelPackages",
+                    "sagemaker:ListModels",
+                    "sagemaker:ListProjects",
+                    "sagemaker:ListUserProfiles",
+                    {"Fn::If": [
+                      "AddCloudWatchPermission",
+                      "cloudwatch:GetMetricStatistics",
+                      {"Ref": "AWS::NoValue"}
+                    ]},
+                    {"Fn::If": [
+                      "EnableCarbonFootprintCondition",
+                      "sustainability:GetCarbonFootprintSummary",
+                      {"Ref": "AWS::NoValue"}
+                    ]},
+                    {"Fn::If": [
+                      "EnableCloudFormationCondition",
+                      "cloudformation:ListStacks",                     
+                      {"Ref": "AWS::NoValue"}
+                    ]},
+                    {"Fn::If": [
+                      "EnableCloudFormationCondition",
+                      "cloudformation:DescribeStacks",
+                      {"Ref": "AWS::NoValue"}
+                    ]}
                   ],
-                  "Resource": {
-                    "Fn::Sub": "arn:aws:s3:::${S3BucketName}/*"
-                  }
-                },
-                {
-                  "Effect": "Allow",
-                  "Action": [
-								"ec2:DescribeInstances",
-								"ec2:DescribeVpcs",
-								"ec2:DescribeSubnets",
-								"ec2:DescribeSecurityGroups",
-								"ec2:DescribeRouteTables",
-								"ec2:DescribeNetworkAcls",
-								"ec2:DescribeInternetGateways",
-								"ec2:DescribeNatGateways",
-								"ec2:DescribeVpcEndpoints",
-								"ec2:DescribeVpnConnections",
-								"ec2:DescribeVpnGateways",
-								"ec2:DescribeCustomerGateways",
-								"ec2:DescribeVpcPeeringConnections",
-								"ec2:DescribeAddresses",
-								"ec2:DescribeVolumes",
-								"ec2:DescribeFlowLogs",
-								"ec2:DescribeSecurityGroupRules",
-								"ec2:DescribeSnapshots",
-								"ec2:DescribeTransitGateways",
-								"lambda:ListFunctions",
-								"lambda:ListLayers",
-								"s3:ListAllMyBuckets",
-								"s3:ListBucket",
-								"iam:ListRoles",
-								"iam:ListPolicies",
-								"iam:ListUsers",
-								"organizations:ListAccounts",
-								"organizations:ListPolicies",
-								"sns:ListSubscriptions",
-								"sns:ListTopics",
-								"sqs:ListQueues",
-								"rds:DescribeDBClusters",
-								"rds:DescribeDBInstances",
-								"rds:DescribeDBSnapshots",
-								"rds:DescribeDBSecurityGroups",
-								"rds:DescribeGlobalClusters",
-								"dynamodb:ListTables",
-								"ecs:ListClusters",
-								"ecs:ListServices",
-								"ecs:ListTasks",
-								"eks:ListClusters",
-								"eks:DescribeCluster",
-								"eks:ListFargateProfiles",
-								"elbv2:DescribeLoadBalancers",
-								"cloudfront:ListDistributions",
-								"cloudfront:ListFunctions",
-								"cloudwatch:ListDashboards",
-								"cloudwatch:ListMetrics",
-								"accessanalyzer:ListAnalyzers",
-								"accessanizer:ListFindings",
-								"budgets:DescribeBudgets",
-								"emr:ListClusters",
-								"emr:ListInstanceFleets",
-								"emr:ListNotebookExecutions",
-								"emr:ListStudioSessionMappings",
-								"route53:ListHostedZones",
-								"route53:ListResourceRecordSets",
-								"codecommit:ListRepositories",
-								"kms:ListKeys",
-								"redshift:DescribeClusters",
-								"redshift-serverless:ListNamespaces",
-								"redshift-serverless:ListWorkgroups",
-								"efs:DescribeFileSystems",
-								"sagemaker:ListDomains",
-								"sagemaker:ListImages",
-								"sagemaker:ListModelPackages",
-								"sagemaker:ListModels",
-								"sagemaker:ListProjects",
-								"sagemaker:ListUserProfiles"
-							],
                   "Resource": "*"
                 }
               ]
@@ -149,48 +204,1048 @@
     "LambdaFunction": {
       "Type": "AWS::Lambda::Function",
       "Properties": {
-        "FunctionName": {
-          "Ref": "FunctionName"
-        },
-        "Role": {
-          "Fn::GetAtt": [
-            "LambdaExecutionRole",
-            "Arn"
-          ]
-        },
+        "FunctionName": {"Ref": "FunctionName"},
+        "Role": {"Fn::GetAtt": ["LambdaExecutionRole", "Arn"]},
         "PackageType": "Image",
-        "Code": {
-          "ImageUri": {
-            "Fn::Sub": "${AWSDataCollectorImageURI}:${ImageTag}"
-          }
-        },
+        "Code": {"ImageUri": {"Fn::Sub": "${AWSDataCollectorImageURI}:${ImageTag}"}},
         "Environment": {
           "Variables": {
-            "s3_bucket": {
-              "Ref": "S3BucketName"
-            }
+            "s3_bucket": {"Ref": "S3BucketName"},
+            "account_id": {"Ref": "AWS::AccountId"}
           }
         },
         "Timeout": 900,
         "MemorySize": 512
+      }
+    },
+    "EventBridgeRuleCPUUtilization": {
+      "Type": "AWS::Events::Rule",
+      "Condition": "EnableCPUUtilizationCondition",
+      "Properties": {
+        "ScheduleExpression": {"Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"},
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {"Fn::GetAtt": ["LambdaFunction", "Arn"]},
+            "Id": "LambdaFunctionTargetCPUUtilization",
+            "Input": "{\"service\": \"CPUUtilization\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeLambdaPermissionCPUUtilization": {
+      "Type": "AWS::Lambda::Permission",
+      "Condition": "EnableCPUUtilizationCondition",
+      "Properties": {
+        "FunctionName": {"Ref": "LambdaFunction"},
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleCPUUtilization", "Arn"]}
+      }
+    },
+    "EventBridgeRuleMemoryUtilization": {
+      "Type": "AWS::Events::Rule",
+      "Condition": "EnableMemoryUtilizationCondition",
+      "Properties": {
+        "ScheduleExpression": {"Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"},
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {"Fn::GetAtt": ["LambdaFunction", "Arn"]},
+            "Id": "LambdaFunctionTargetMemoryUtilization",
+            "Input": "{\"service\": \"mem_used_percent\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeLambdaPermissionMemoryUtilization": {
+      "Type": "AWS::Lambda::Permission",
+      "Condition": "EnableMemoryUtilizationCondition",
+      "Properties": {
+        "FunctionName": {"Ref": "LambdaFunction"},
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleMemoryUtilization", "Arn"]}
+      }
+    },
+    "EventBridgeRuleCPUReservation": {
+      "Type": "AWS::Events::Rule",
+      "Condition": "EnableCPUReservationCondition",
+      "Properties": {
+        "ScheduleExpression": {"Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"},
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {"Fn::GetAtt": ["LambdaFunction", "Arn"]},
+            "Id": "LambdaFunctionTargetCPUReservation",
+            "Input": "{\"service\": \"CPUReservation\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeLambdaPermissionCPUReservation": {
+      "Type": "AWS::Lambda::Permission",
+      "Condition": "EnableCPUReservationCondition",
+      "Properties": {
+        "FunctionName": {"Ref": "LambdaFunction"},
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleCPUReservation", "Arn"]}
+      }
+    },
+    "EventBridgeRuleMemoryReservation": {
+      "Type": "AWS::Events::Rule",
+      "Condition": "EnableMemoryReservationCondition",
+      "Properties": {
+        "ScheduleExpression": {"Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"},
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {"Fn::GetAtt": ["LambdaFunction", "Arn"]},
+            "Id": "LambdaFunctionTargetMemoryReservation",
+            "Input": "{\"service\": \"MemoryReservation\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeLambdaPermissionMemoryReservation": {
+      "Type": "AWS::Lambda::Permission",
+      "Condition": "EnableMemoryReservationCondition",
+      "Properties": {
+        "FunctionName": {"Ref": "LambdaFunction"},
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleMemoryReservation", "Arn"]}
+      }
+    },
+    "EventBridgeRuleNetworkUtilization": {
+      "Type": "AWS::Events::Rule",
+      "Condition": "EnableNetworkUtilizationCondition",
+      "Properties": {
+        "ScheduleExpression": {"Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"},
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {"Fn::GetAtt": ["LambdaFunction", "Arn"]},
+            "Id": "LambdaFunctionTargetNetworkUtilization",
+            "Input": "{\"service\": \"NetworkUtilization\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeLambdaPermissionNetworkUtilization": {
+      "Type": "AWS::Lambda::Permission",
+      "Condition": "EnableNetworkUtilizationCondition",
+      "Properties": {
+        "FunctionName": {"Ref": "LambdaFunction"},
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleNetworkUtilization", "Arn"]}
+      }
+    },
+    "EventBridgeRuleVolumeIOPS": {
+      "Type": "AWS::Events::Rule",
+      "Condition": "EnableVolumeIOPSCondition",
+      "Properties": {
+        "ScheduleExpression": {"Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"},
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {"Fn::GetAtt": ["LambdaFunction", "Arn"]},
+            "Id": "LambdaFunctionTargetVolumeIOPS",
+            "Input": "{\"service\": \"VolumeIOPS\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeLambdaPermissionVolumeIOPS": {
+      "Type": "AWS::Lambda::Permission",
+      "Condition": "EnableVolumeIOPSCondition",
+      "Properties": {
+        "FunctionName": {"Ref": "LambdaFunction"},
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleVolumeIOPS", "Arn"]}
+      }
+    },
+    "EventBridgeRuleVolumeThroughput": {
+      "Type": "AWS::Events::Rule",
+      "Condition": "EnableVolumeThroughputCondition",
+      "Properties": {
+        "ScheduleExpression": {"Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"},
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {"Fn::GetAtt": ["LambdaFunction", "Arn"]},
+            "Id": "LambdaFunctionTargetVolumeThroughput",
+            "Input": "{\"service\": \"VolumeThroughput\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeLambdaPermissionVolumeThroughput": {
+      "Type": "AWS::Lambda::Permission",
+      "Condition": "EnableVolumeThroughputCondition",
+      "Properties": {
+        "FunctionName": {"Ref": "LambdaFunction"},
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleVolumeThroughput", "Arn"]}
+      }
+    },
+    "EventBridgeRuleCarbonFootprint": {
+      "Type": "AWS::Events::Rule",
+      "Condition": "EnableCarbonFootprintCondition",
+      "Properties": {
+        "ScheduleExpression": {"Fn::Sub": "cron(0 ${ScheduleHour} L * ? *)"},
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {"Fn::GetAtt": ["LambdaFunction", "Arn"]},
+            "Id": "LambdaFunctionTargetCarbonFootprint",
+            "Input": "{\"service\": \"carbon_footprint\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeRuleCloudFormation": {
+      "Type": "AWS::Events::Rule",
+      "Condition": "EnableCloudFormationCondition",
+      "Properties": {
+        "ScheduleExpression": {"Fn::Sub": "cron(0 ${ScheduleHour} L * ? *)"},
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {"Fn::GetAtt": ["LambdaFunction", "Arn"]},
+            "Id": "LambdaFunctionTargetCloudFormation",
+            "Input": "{\"service\": \"cloudformation\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeLambdaPermissionCarbonFootprint": {
+      "Type": "AWS::Lambda::Permission",
+      "Condition": "EnableCarbonFootprintCondition",
+      "Properties": {
+        "FunctionName": {"Ref": "LambdaFunction"},
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleCarbonFootprint", "Arn"]}
+      }
+    },
+    "EventBridgeLambdaPermissionCloudFormation": {
+      "Type": "AWS::Lambda::Permission",
+      "Condition": "EnableCloudFormationCondition",
+      "Properties": {
+        "FunctionName": {"Ref": "LambdaFunction"},
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleCloudFormation", "Arn"]}
+      }
+    },
+    "EventBridgeRuleS3": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "ScheduleExpression": {
+          "Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"
+        },
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "LambdaFunction",
+                "Arn"
+              ]
+            },
+            "Id": "LambdaFunctionTargetS3",
+            "Input": "{\"service\": \"s3\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeRuleEC2": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "ScheduleExpression": {
+          "Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"
+        },
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "LambdaFunction",
+                "Arn"
+              ]
+            },
+            "Id": "LambdaFunctionTargetEC2",
+            "Input": "{\"service\": \"ec2\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeLambdaPermissionS3": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "LambdaFunction"
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "EventBridgeRuleS3",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "EventBridgeLambdaPermissionEC2": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "LambdaFunction"
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "EventBridgeRuleEC2",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "EventBridgeRuleECS": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "ScheduleExpression": {
+          "Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"
+        },
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "LambdaFunction",
+                "Arn"
+              ]
+            },
+            "Id": "LambdaFunctionTargetECS",
+            "Input": "{\"service\": \"ecs\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeLambdaPermissionECS": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "LambdaFunction"
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "EventBridgeRuleECS",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "EventBridgeRuleCloudFront": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "ScheduleExpression": {
+          "Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"
+        },
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "LambdaFunction",
+                "Arn"
+              ]
+            },
+            "Id": "LambdaFunctionTargetCloudFront",
+            "Input": "{\"service\": \"cloudfront\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeLambdaPermissionCloudFront": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "LambdaFunction"
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "EventBridgeRuleCloudFront",
+            "Arn"
+          ]
+        }
+      }
+    },
+
+    "EventBridgeRuleCloudTrail": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "ScheduleExpression": {
+          "Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"
+        },
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "LambdaFunction",
+                "Arn"
+              ]
+            },
+            "Id": "LambdaFunctionTargetCloudTrail",
+            "Input": "{\"service\": \"cloudtrail\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeLambdaPermissionCloudTrail": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "LambdaFunction"
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "EventBridgeRuleCloudTrail",
+            "Arn"
+          ]
+        }
+      }
+    },
+
+    "EventBridgeRuleCloudWatch": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "ScheduleExpression": {
+          "Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"
+        },
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "LambdaFunction",
+                "Arn"
+              ]
+            },
+            "Id": "LambdaFunctionTargetCloudWatch",
+            "Input": "{\"service\": \"cloudwatch\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeLambdaPermissionCloudWatch": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "LambdaFunction"
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "EventBridgeRuleCloudWatch",
+            "Arn"
+          ]
+        }
+      }
+    },
+
+    "EventBridgeRuleCodeCommit": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "ScheduleExpression": {
+          "Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"
+        },
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "LambdaFunction",
+                "Arn"
+              ]
+            },
+            "Id": "LambdaFunctionTargetCodeCommit",
+            "Input": "{\"service\": \"codecommit\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeLambdaPermissionCodeCommit": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "LambdaFunction"
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "EventBridgeRuleCodeCommit",
+            "Arn"
+          ]
+        }
+      }
+    },
+
+    "EventBridgeRuleDynamoDB": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "ScheduleExpression": {
+          "Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"
+        },
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "LambdaFunction",
+                "Arn"
+              ]
+            },
+            "Id": "LambdaFunctionTargetDynamoDB",
+            "Input": "{\"service\": \"dynamodb\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeLambdaPermissionDynamoDB": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "LambdaFunction"
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "EventBridgeRuleDynamoDB",
+            "Arn"
+          ]
+        }
+      }
+    },
+
+    "EventBridgeRuleEFS": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "ScheduleExpression": {
+          "Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"
+        },
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "LambdaFunction",
+                "Arn"
+              ]
+            },
+            "Id": "LambdaFunctionTargetEFS",
+            "Input": "{\"service\": \"efs\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeLambdaPermissionEFS": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "LambdaFunction"
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "EventBridgeRuleEFS",
+            "Arn"
+          ]
+        }
+      }
+    },
+
+    "EventBridgeRuleEKS": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "ScheduleExpression": {
+          "Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"
+        },
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "LambdaFunction",
+                "Arn"
+              ]
+            },
+            "Id": "LambdaFunctionTargetEKS",
+            "Input": "{\"service\": \"eks\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeLambdaPermissionEKS": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "LambdaFunction"
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "EventBridgeRuleEKS",
+            "Arn"
+          ]
+        }
+      }
+    },
+
+    "EventBridgeRuleELBv2": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "ScheduleExpression": {
+          "Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"
+        },
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "LambdaFunction",
+                "Arn"
+              ]
+            },
+            "Id": "LambdaFunctionTargetELBv2",
+            "Input": "{\"service\": \"elbv2\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeLambdaPermissionELBv2": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "LambdaFunction"
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "EventBridgeRuleELBv2",
+            "Arn"
+          ]
+        }
+      }
+    },
+
+    "EventBridgeRuleEMR": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "ScheduleExpression": {
+          "Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"
+        },
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "LambdaFunction",
+                "Arn"
+              ]
+            },
+            "Id": "LambdaFunctionTargetEMR",
+            "Input": "{\"service\": \"emr\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeLambdaPermissionEMR": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "LambdaFunction"
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "EventBridgeRuleEMR",
+            "Arn"
+          ]
+        }
+      }
+    },
+
+    "EventBridgeRuleEMRServerless": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "ScheduleExpression": {
+          "Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"
+        },
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "LambdaFunction",
+                "Arn"
+              ]
+            },
+            "Id": "LambdaFunctionTargetEMRServerless",
+            "Input": "{\"service\": \"emr-serverless\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeLambdaPermissionEMRServerless": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "LambdaFunction"
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "EventBridgeRuleEMRServerless",
+            "Arn"
+          ]
+        }
+      }
+    },
+
+    "EventBridgeRuleLambda": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "ScheduleExpression": {
+          "Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"
+        },
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "LambdaFunction",
+                "Arn"
+              ]
+            },
+            "Id": "LambdaFunctionTargetLambda",
+            "Input": "{\"service\": \"lambda\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeLambdaPermissionLambda": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "LambdaFunction"
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "EventBridgeRuleLambda",
+            "Arn"
+          ]
+        }
+      }
+    },
+
+    "EventBridgeRuleRDS": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "ScheduleExpression": {
+          "Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"
+        },
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "LambdaFunction",
+                "Arn"
+              ]
+            },
+            "Id": "LambdaFunctionTargetRDS",
+            "Input": "{\"service\": \"rds\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeLambdaPermissionRDS": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "LambdaFunction"
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "EventBridgeRuleRDS",
+            "Arn"
+          ]
+        }
+      }
+    },
+
+    "EventBridgeRuleRedshift": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "ScheduleExpression": {
+          "Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"
+        },
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "LambdaFunction",
+                "Arn"
+              ]
+            },
+            "Id": "LambdaFunctionTargetRedshift",
+            "Input": "{\"service\": \"redshift\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeLambdaPermissionRedshift": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "LambdaFunction"
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "EventBridgeRuleRedshift",
+            "Arn"
+          ]
+        }
+      }
+    },
+
+    "EventBridgeRuleSageMaker": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "ScheduleExpression": {
+          "Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"
+        },
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "LambdaFunction",
+                "Arn"
+              ]
+            },
+            "Id": "LambdaFunctionTargetSageMaker",
+            "Input": "{\"service\": \"sagemaker\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeLambdaPermissionSageMaker": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "LambdaFunction"
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "EventBridgeRuleSageMaker",
+            "Arn"
+          ]
+        }
+      }
+    },
+
+    "EventBridgeRuleSNS": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "ScheduleExpression": {
+          "Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"
+        },
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "LambdaFunction",
+                "Arn"
+              ]
+            },
+            "Id": "LambdaFunctionTargetSNS",
+            "Input": "{\"service\": \"sns\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeLambdaPermissionSNS": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "LambdaFunction"
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "EventBridgeRuleSNS",
+            "Arn"
+          ]
+        }
+      }
+    },
+
+    "EventBridgeRuleSQS": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "ScheduleExpression": {
+          "Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"
+        },
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "LambdaFunction",
+                "Arn"
+              ]
+            },
+            "Id": "LambdaFunctionTargetSQS",
+            "Input": "{\"service\": \"sqs\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeLambdaPermissionSQS": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "LambdaFunction"
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "EventBridgeRuleSQS",
+            "Arn"
+          ]
+        }
+      }
+    },
+
+    "EventBridgeRuleOrganization": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "ScheduleExpression": {
+          "Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"
+        },
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "LambdaFunction",
+                "Arn"
+              ]
+            },
+            "Id": "LambdaFunctionTargetOrganization",
+            "Input": "{\"service\": \"organizations\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeLambdaPermissionOrganization": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "LambdaFunction"
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "EventBridgeRuleOrganization",
+            "Arn"
+          ]
+        }
+      }
+    },
+
+    "EventBridgeRuleSSM": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "ScheduleExpression": {
+          "Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"
+        },
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "LambdaFunction",
+                "Arn"
+              ]
+            },
+            "Id": "LambdaFunctionTargetSSM",
+            "Input": "{\"service\": \"ssm\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeLambdaPermissionSSM": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "LambdaFunction"
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "EventBridgeRuleSSM",
+            "Arn"
+          ]
+        }
       }
     }
   },
   "Outputs": {
     "LambdaFunctionName": {
       "Description": "The name of the Lambda function",
-      "Value": {
-        "Ref": "LambdaFunction"
-      }
+      "Value": {"Ref": "LambdaFunction"}
     },
     "LambdaFunctionArn": {
       "Description": "The ARN of the Lambda function",
-      "Value": {
-        "Fn::GetAtt": [
-          "LambdaFunction",
-          "Arn"
-        ]
-      }
+      "Value": {"Fn::GetAtt": ["LambdaFunction", "Arn"]}
     }
   }
 }
