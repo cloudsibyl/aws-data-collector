@@ -228,6 +228,166 @@
                 "Timestamp": "string",
                 "Average": "string"
             }
+        },
+        {
+            "function_name": "rds_cpu_utilization",
+            "function_description": "RDS CPU Utilization metrics for cost optimization",
+            "boto_session_type": "client",
+            "response_format": "FORMAT_2",
+            "function_type": "list",
+            "is_regional": "Yes",
+            "pagination_support": "Yes",
+            "result_keys": [
+                "Datapoints"
+            ],
+            "json_response": {
+                "Timestamp": "string",
+                "Average": "string"
+            }
+        },
+        {
+            "function_name": "rds_database_connections",
+            "function_description": "RDS Database Connections metrics for capacity planning",
+            "boto_session_type": "client",
+            "response_format": "FORMAT_2",
+            "function_type": "list",
+            "is_regional": "Yes",
+            "pagination_support": "Yes",
+            "result_keys": [
+                "Datapoints"
+            ],
+            "json_response": {
+                "Timestamp": "string",
+                "Average": "string"
+            }
+        },
+        {
+            "function_name": "rds_freeable_memory",
+            "function_description": "RDS Freeable Memory metrics for instance sizing optimization",
+            "boto_session_type": "client",
+            "response_format": "FORMAT_2",
+            "function_type": "list",
+            "is_regional": "Yes",
+            "pagination_support": "Yes",
+            "result_keys": [
+                "Datapoints"
+            ],
+            "json_response": {
+                "Timestamp": "string",
+                "Average": "string"
+            }
+        },
+        {
+            "function_name": "rds_free_storage_space",
+            "function_description": "RDS Free Storage Space metrics for storage cost optimization",
+            "boto_session_type": "client",
+            "response_format": "FORMAT_2",
+            "function_type": "list",
+            "is_regional": "Yes",
+            "pagination_support": "Yes",
+            "result_keys": [
+                "Datapoints"
+            ],
+            "json_response": {
+                "Timestamp": "string",
+                "Average": "string"
+            }
+        },
+        {
+            "function_name": "rds_read_iops",
+            "function_description": "RDS Read IOPS metrics for storage performance cost analysis",
+            "boto_session_type": "client",
+            "response_format": "FORMAT_2",
+            "function_type": "list",
+            "is_regional": "Yes",
+            "pagination_support": "Yes",
+            "result_keys": [
+                "Datapoints"
+            ],
+            "json_response": {
+                "Timestamp": "string",
+                "Average": "string"
+            }
+        },
+        {
+            "function_name": "rds_write_iops",
+            "function_description": "RDS Write IOPS metrics for storage performance cost analysis",
+            "boto_session_type": "client",
+            "response_format": "FORMAT_2",
+            "function_type": "list",
+            "is_regional": "Yes",
+            "pagination_support": "Yes",
+            "result_keys": [
+                "Datapoints"
+            ],
+            "json_response": {
+                "Timestamp": "string",
+                "Average": "string"
+            }
+        },
+        {
+            "function_name": "rds_read_throughput",
+            "function_description": "RDS Read Throughput metrics for network cost analysis",
+            "boto_session_type": "client",
+            "response_format": "FORMAT_2",
+            "function_type": "list",
+            "is_regional": "Yes",
+            "pagination_support": "Yes",
+            "result_keys": [
+                "Datapoints"
+            ],
+            "json_response": {
+                "Timestamp": "string",
+                "Average": "string"
+            }
+        },
+        {
+            "function_name": "rds_write_throughput",
+            "function_description": "RDS Write Throughput metrics for network cost analysis",
+            "boto_session_type": "client",
+            "response_format": "FORMAT_2",
+            "function_type": "list",
+            "is_regional": "Yes",
+            "pagination_support": "Yes",
+            "result_keys": [
+                "Datapoints"
+            ],
+            "json_response": {
+                "Timestamp": "string",
+                "Average": "string"
+            }
+        },
+        {
+            "function_name": "rds_replica_lag",
+            "function_description": "RDS Replica Lag metrics for read replica cost optimization",
+            "boto_session_type": "client",
+            "response_format": "FORMAT_2",
+            "function_type": "list",
+            "is_regional": "Yes",
+            "pagination_support": "Yes",
+            "result_keys": [
+                "Datapoints"
+            ],
+            "json_response": {
+                "Timestamp": "string",
+                "Average": "string"
+            }
+        },
+        {
+            "function_name": "rds_aurora_capacity_units",
+            "function_description": "Aurora Serverless v2 capacity units for cost optimization",
+            "boto_session_type": "client",
+            "response_format": "FORMAT_2",
+            "function_type": "list",
+            "is_regional": "Yes",
+            "pagination_support": "Yes",
+            "result_keys": [
+                "Datapoints"
+            ],
+            "json_response": {
+                "Timestamp": "string",
+                "Average": "string"
+            }
         }
     ]
 }

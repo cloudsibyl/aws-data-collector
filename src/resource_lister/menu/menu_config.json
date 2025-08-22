@@ -976,6 +976,166 @@
             }
         },
         {
+            "menu_index": "cloudwatch_rds_cpu_utilization_metric",
+            "menu_help": "RDS CPU Utilization metrics for cost optimization",
+            "is_multi_account_support": "yes",
+            "is_regional": "yes",
+            "service_name": "cloudwatch",
+            "function_name": "rds_cpu_utilization",
+            "implclass": "_metric_processor",
+            "implfunction": "process",
+            "validation_functions": "",
+            "metric_parameters": {
+                "Namespace": "AWS/RDS",
+                "Period": 300,
+                "Statistics": ["Average"]
+            }
+        },
+        {
+            "menu_index": "cloudwatch_rds_database_connections_metric",
+            "menu_help": "RDS Database Connections metrics for capacity planning",
+            "is_multi_account_support": "yes",
+            "is_regional": "yes",
+            "service_name": "cloudwatch",
+            "function_name": "rds_database_connections",
+            "implclass": "_metric_processor",
+            "implfunction": "process",
+            "validation_functions": "",
+            "metric_parameters": {
+                "Namespace": "AWS/RDS",
+                "Period": 300,
+                "Statistics": ["Average"]
+            }
+        },
+        {
+            "menu_index": "cloudwatch_rds_freeable_memory_metric",
+            "menu_help": "RDS Freeable Memory metrics for instance sizing optimization",
+            "is_multi_account_support": "yes",
+            "is_regional": "yes",
+            "service_name": "cloudwatch",
+            "function_name": "rds_freeable_memory",
+            "implclass": "_metric_processor",
+            "implfunction": "process",
+            "validation_functions": "",
+            "metric_parameters": {
+                "Namespace": "AWS/RDS",
+                "Period": 300,
+                "Statistics": ["Average"]
+            }
+        },
+        {
+            "menu_index": "cloudwatch_rds_free_storage_space_metric",
+            "menu_help": "RDS Free Storage Space metrics for storage cost optimization",
+            "is_multi_account_support": "yes",
+            "is_regional": "yes",
+            "service_name": "cloudwatch",
+            "function_name": "rds_free_storage_space",
+            "implclass": "_metric_processor",
+            "implfunction": "process",
+            "validation_functions": "",
+            "metric_parameters": {
+                "Namespace": "AWS/RDS",
+                "Period": 300,
+                "Statistics": ["Average"]
+            }
+        },
+        {
+            "menu_index": "cloudwatch_rds_read_iops_metric",
+            "menu_help": "RDS Read IOPS metrics for storage performance cost analysis",
+            "is_multi_account_support": "yes",
+            "is_regional": "yes",
+            "service_name": "cloudwatch",
+            "function_name": "rds_read_iops",
+            "implclass": "_metric_processor",
+            "implfunction": "process",
+            "validation_functions": "",
+            "metric_parameters": {
+                "Namespace": "AWS/RDS",
+                "Period": 300,
+                "Statistics": ["Average"]
+            }
+        },
+        {
+            "menu_index": "cloudwatch_rds_write_iops_metric",
+            "menu_help": "RDS Write IOPS metrics for storage performance cost analysis",
+            "is_multi_account_support": "yes",
+            "is_regional": "yes",
+            "service_name": "cloudwatch",
+            "function_name": "rds_write_iops",
+            "implclass": "_metric_processor",
+            "implfunction": "process",
+            "validation_functions": "",
+            "metric_parameters": {
+                "Namespace": "AWS/RDS",
+                "Period": 300,
+                "Statistics": ["Average"]
+            }
+        },
+        {
+            "menu_index": "cloudwatch_rds_read_throughput_metric",
+            "menu_help": "RDS Read Throughput metrics for network cost analysis",
+            "is_multi_account_support": "yes",
+            "is_regional": "yes",
+            "service_name": "cloudwatch",
+            "function_name": "rds_read_throughput",
+            "implclass": "_metric_processor",
+            "implfunction": "process",
+            "validation_functions": "",
+            "metric_parameters": {
+                "Namespace": "AWS/RDS",
+                "Period": 300,
+                "Statistics": ["Average"]
+            }
+        },
+        {
+            "menu_index": "cloudwatch_rds_write_throughput_metric",
+            "menu_help": "RDS Write Throughput metrics for network cost analysis",
+            "is_multi_account_support": "yes",
+            "is_regional": "yes",
+            "service_name": "cloudwatch",
+            "function_name": "rds_write_throughput",
+            "implclass": "_metric_processor",
+            "implfunction": "process",
+            "validation_functions": "",
+            "metric_parameters": {
+                "Namespace": "AWS/RDS",
+                "Period": 300,
+                "Statistics": ["Average"]
+            }
+        },
+        {
+            "menu_index": "cloudwatch_rds_replica_lag_metric",
+            "menu_help": "RDS Replica Lag metrics for read replica cost optimization",
+            "is_multi_account_support": "yes",
+            "is_regional": "yes",
+            "service_name": "cloudwatch",
+            "function_name": "rds_replica_lag",
+            "implclass": "_metric_processor",
+            "implfunction": "process",
+            "validation_functions": "",
+            "metric_parameters": {
+                "Namespace": "AWS/RDS",
+                "Period": 300,
+                "Statistics": ["Average"]
+            }
+        },
+        {
+            "menu_index": "cloudwatch_rds_aurora_capacity_units_metric",
+            "menu_help": "Aurora Serverless v2 capacity units for cost optimization",
+            "is_multi_account_support": "yes",
+            "is_regional": "yes",
+            "service_name": "cloudwatch",
+            "function_name": "rds_aurora_capacity_units",
+            "implclass": "_metric_processor",
+            "implfunction": "process",
+            "validation_functions": "",
+            "metric_parameters": {
+                "Namespace": "AWS/RDS",
+                "Period": 300,
+                "Statistics": ["Average"]
+            }
+        },
+        {
             "menu_index": "efs_describe_file_systems",
             "menu_help": "List of EFS",
             "is_multi_account_support": "yes",

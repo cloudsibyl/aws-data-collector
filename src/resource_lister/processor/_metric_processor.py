@@ -32,6 +32,9 @@ def process(process_config):
     elif metric_parameters["Namespace"] == "AWS/ECS":
         intances = get_cluster_names(accounts, regions)
         dimension_name = "ClusterName"
+    elif metric_parameters["Namespace"] == "AWS/RDS":
+        intances = get_rds_instance_ids(accounts, regions)
+        dimension_name = "DBInstanceIdentifier"
     else:
         raise Exception("Namespace not supported")
 
@@ -139,6 +142,35 @@ def fetch_volume_ids(session, region):
             if len(volume_ids) >= 60:
                 return volume_ids
     return volume_ids
+
+def get_rds_instance_ids(accounts, regions):
+    rds_instance_ids = []
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        futures = []
+        for account in accounts:
+            for region in regions:
+                futures.append(executor.submit(fetch_rds_instance_ids, SessionHandler.get_new_session(account), region))
+        
+        for future in concurrent.futures.as_completed(futures):
+            try:
+                result = future.result()
+                rds_instance_ids.extend(result)
+                if len(rds_instance_ids) >= 60:
+                    return rds_instance_ids[:60]
+            except Exception as exc:
+                logger.error(exc)
+    return rds_instance_ids[:60]
+
+def fetch_rds_instance_ids(session, region):
+    rds_client = session.client("rds", config=Config(region_name=region))
+    paginator = rds_client.get_paginator("describe_db_instances")
+    rds_instance_ids = []
+    for page in paginator.paginate():
+        for db_instance in page['DBInstances']:
+            rds_instance_ids.append(db_instance['DBInstanceIdentifier'])
+            if len(rds_instance_ids) >= 60:
+                return rds_instance_ids
+    return rds_instance_ids
 
 def process_metrics(accounts, regions, service_name, function_name, intance, metric_parameters, current_date):
     metrics_results = []
