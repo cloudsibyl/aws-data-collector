@@ -25,160 +25,48 @@
       "Default": 21,
       "Description": "The hour of day (UTC) to run the Lambda function (0-23)."
     },
-    "EnableCPUUtilization": {
+    "EnableEC2Metrics": {
       "Type": "String",
       "AllowedValues": ["true", "false"],
       "Default": "false",
-      "Description": "Enable CPU Utilization"
+      "Description": "Enable EC2 performance and reservation metrics (CPU Utilization, Memory Utilization, CPU Reservation, Memory Reservation, Network Utilization, Volume IOPS, Volume Throughput)"
     },
-    "EnableMemoryUtilization": {
+    "EnableRDSMetrics": {
       "Type": "String",
       "AllowedValues": ["true", "false"],
       "Default": "false",
-      "Description": "Enable Memory Utilization"
+      "Description": "Enable RDS performance metrics (CPU Utilization, Database Connections, Freeable Memory, Free Storage Space, Read/Write IOPS, Read/Write Throughput, Replica Lag)"
     },
-    "EnableCPUReservation": {
+    "EnableAuroraMetrics": {
       "Type": "String",
       "AllowedValues": ["true", "false"],
       "Default": "false",
-      "Description": "Enable CPU Reservation"
-    },
-    "EnableMemoryReservation": {
-      "Type": "String",
-      "AllowedValues": ["true", "false"],
-      "Default": "false",
-      "Description": "Enable Memory Reservation"
-    },
-    "EnableNetworkUtilization": {
-      "Type": "String",
-      "AllowedValues": ["true", "false"],
-      "Default": "false",
-      "Description": "Enable Network Utilization"
-    },
-    "EnableVolumeIOPS": {
-      "Type": "String",
-      "AllowedValues": ["true", "false"],
-      "Default": "false",
-      "Description": "Enable Volume IOPS"
-    },
-    "EnableVolumeThroughput": {
-      "Type": "String",
-      "AllowedValues": ["true", "false"],
-      "Default": "false",
-      "Description": "Enable Volume Throughput"
-    },
-    "EnableRDSCPUUtilization": {
-      "Type": "String",
-      "AllowedValues": ["true", "false"],
-      "Default": "false",
-      "Description": "Enable RDS CPU Utilization metrics"
-    },
-    "EnableRDSDatabaseConnections": {
-      "Type": "String",
-      "AllowedValues": ["true", "false"],
-      "Default": "false",
-      "Description": "Enable RDS Database Connections metrics"
-    },
-    "EnableRDSFreeableMemory": {
-      "Type": "String",
-      "AllowedValues": ["true", "false"],
-      "Default": "false",
-      "Description": "Enable RDS Freeable Memory metrics"
-    },
-    "EnableRDSFreeStorageSpace": {
-      "Type": "String",
-      "AllowedValues": ["true", "false"],
-      "Default": "false",
-      "Description": "Enable RDS Free Storage Space metrics"
-    },
-    "EnableRDSReadIOPS": {
-      "Type": "String",
-      "AllowedValues": ["true", "false"],
-      "Default": "false",
-      "Description": "Enable RDS Read IOPS metrics"
-    },
-    "EnableRDSWriteIOPS": {
-      "Type": "String",
-      "AllowedValues": ["true", "false"],
-      "Default": "false",
-      "Description": "Enable RDS Write IOPS metrics"
-    },
-    "EnableRDSReadThroughput": {
-      "Type": "String",
-      "AllowedValues": ["true", "false"],
-      "Default": "false",
-      "Description": "Enable RDS Read Throughput metrics"
-    },
-    "EnableRDSWriteThroughput": {
-      "Type": "String",
-      "AllowedValues": ["true", "false"],
-      "Default": "false",
-      "Description": "Enable RDS Write Throughput metrics"
-    },
-    "EnableRDSReplicaLag": {
-      "Type": "String",
-      "AllowedValues": ["true", "false"],
-      "Default": "false",
-      "Description": "Enable RDS Replica Lag metrics"
-    },
-    "EnableRDSAuroraCapacityUnits": {
-      "Type": "String",
-      "AllowedValues": ["true", "false"],
-      "Default": "false",
-      "Description": "Enable Aurora Serverless v2 Capacity Units metrics"
-    },
-    "EnableCarbonFootprint": {
-      "Type": "String",
-      "AllowedValues": ["true", "false"],
-      "Default": "false",
-      "Description": "Enable carbon footprint data collection on the last day of each month."
+      "Description": "Enable Aurora Serverless v2 specific metrics (Capacity Units)"
     },
     "EnableCloudFormation": {
       "Type": "String",
       "AllowedValues": ["true", "false"],
       "Default": "false",
-      "Description": "Enable collecting cloudFormation data."
+      "Description": "Enable collecting CloudFormation data."
+    },
+    "EnableCarbonFootprint": {
+      "Type": "String",
+      "AllowedValues": ["true", "false"],
+      "Default": "false",
+      "Description": "Enable Carbon Footprint data collection for sustainability metrics."
     }
   },
   "Conditions": {
-    "EnableCarbonFootprintCondition": {"Fn::Equals": [{"Ref": "EnableCarbonFootprint"}, "true"]},
+    "EnableEC2MetricsCondition": {"Fn::Equals": [{"Ref": "EnableEC2Metrics"}, "true"]},
+    "EnableRDSMetricsCondition": {"Fn::Equals": [{"Ref": "EnableRDSMetrics"}, "true"]},
+    "EnableAuroraMetricsCondition": {"Fn::Equals": [{"Ref": "EnableAuroraMetrics"}, "true"]},
     "EnableCloudFormationCondition": {"Fn::Equals": [{"Ref": "EnableCloudFormation"}, "true"]},
-    "EnableCPUUtilizationCondition": {"Fn::Equals": [{"Ref": "EnableCPUUtilization"}, "true"]},
-    "EnableMemoryUtilizationCondition": {"Fn::Equals": [{"Ref": "EnableMemoryUtilization"}, "true"]},
-    "EnableCPUReservationCondition": {"Fn::Equals": [{"Ref": "EnableCPUReservation"}, "true"]},
-    "EnableMemoryReservationCondition": {"Fn::Equals": [{"Ref": "EnableMemoryReservation"}, "true"]},
-    "EnableNetworkUtilizationCondition": {"Fn::Equals": [{"Ref": "EnableNetworkUtilization"}, "true"]},
-    "EnableVolumeIOPSCondition": {"Fn::Equals": [{"Ref": "EnableVolumeIOPS"}, "true"]},
-    "EnableVolumeThroughputCondition": {"Fn::Equals": [{"Ref": "EnableVolumeThroughput"}, "true"]},
-    "EnableRDSCPUUtilizationCondition": {"Fn::Equals": [{"Ref": "EnableRDSCPUUtilization"}, "true"]},
-    "EnableRDSDatabaseConnectionsCondition": {"Fn::Equals": [{"Ref": "EnableRDSDatabaseConnections"}, "true"]},
-    "EnableRDSFreeableMemoryCondition": {"Fn::Equals": [{"Ref": "EnableRDSFreeableMemory"}, "true"]},
-    "EnableRDSFreeStorageSpaceCondition": {"Fn::Equals": [{"Ref": "EnableRDSFreeStorageSpace"}, "true"]},
-    "EnableRDSReadIOPSCondition": {"Fn::Equals": [{"Ref": "EnableRDSReadIOPS"}, "true"]},
-    "EnableRDSWriteIOPSCondition": {"Fn::Equals": [{"Ref": "EnableRDSWriteIOPS"}, "true"]},
-    "EnableRDSReadThroughputCondition": {"Fn::Equals": [{"Ref": "EnableRDSReadThroughput"}, "true"]},
-    "EnableRDSWriteThroughputCondition": {"Fn::Equals": [{"Ref": "EnableRDSWriteThroughput"}, "true"]},
-    "EnableRDSReplicaLagCondition": {"Fn::Equals": [{"Ref": "EnableRDSReplicaLag"}, "true"]},
-    "EnableRDSAuroraCapacityUnitsCondition": {"Fn::Equals": [{"Ref": "EnableRDSAuroraCapacityUnits"}, "true"]},
+    "EnableCarbonFootprintCondition": {"Fn::Equals": [{"Ref": "EnableCarbonFootprint"}, "true"]},
     "AddCloudWatchPermission": {
       "Fn::Or": [
-        {"Condition": "EnableCPUUtilizationCondition"},
-        {"Condition": "EnableMemoryUtilizationCondition"},
-        {"Condition": "EnableNetworkUtilizationCondition"},
-        {"Condition": "EnableCPUReservationCondition"},
-        {"Condition": "EnableMemoryReservationCondition"},
-        {"Condition": "EnableVolumeIOPSCondition"},
-        {"Condition": "EnableVolumeThroughputCondition"},
-        {"Condition": "EnableRDSCPUUtilizationCondition"},
-        {"Condition": "EnableRDSDatabaseConnectionsCondition"},
-        {"Condition": "EnableRDSFreeableMemoryCondition"},
-        {"Condition": "EnableRDSFreeStorageSpaceCondition"},
-        {"Condition": "EnableRDSReadIOPSCondition"},
-        {"Condition": "EnableRDSWriteIOPSCondition"},
-        {"Condition": "EnableRDSReadThroughputCondition"},
-        {"Condition": "EnableRDSWriteThroughputCondition"},
-        {"Condition": "EnableRDSReplicaLagCondition"},
-        {"Condition": "EnableRDSAuroraCapacityUnitsCondition"}
+        {"Condition": "EnableEC2MetricsCondition"},
+        {"Condition": "EnableRDSMetricsCondition"},
+        {"Condition": "EnableAuroraMetricsCondition"}
       ]
     }
   },
@@ -257,11 +145,7 @@
                       "cloudwatch:GetMetricStatistics",
                       {"Ref": "AWS::NoValue"}
                     ]},
-                    {"Fn::If": [
-                      "EnableCarbonFootprintCondition",
-                      "sustainability:GetCarbonFootprintSummary",
-                      {"Ref": "AWS::NoValue"}
-                    ]},
+                    "sustainability:GetCarbonFootprintSummary",
                     {"Fn::If": [
                       "EnableCloudFormationCondition",
                       "cloudformation:ListStacks",                     
@@ -300,7 +184,7 @@
     },
     "EventBridgeRuleCPUUtilization": {
       "Type": "AWS::Events::Rule",
-      "Condition": "EnableCPUUtilizationCondition",
+      "Condition": "EnableEC2MetricsCondition",
       "Properties": {
         "ScheduleExpression": {"Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"},
         "State": "ENABLED",
@@ -315,7 +199,7 @@
     },
     "EventBridgeLambdaPermissionCPUUtilization": {
       "Type": "AWS::Lambda::Permission",
-      "Condition": "EnableCPUUtilizationCondition",
+      "Condition": "EnableEC2MetricsCondition",
       "Properties": {
         "FunctionName": {"Ref": "LambdaFunction"},
         "Action": "lambda:InvokeFunction",
@@ -325,7 +209,7 @@
     },
     "EventBridgeRuleMemoryUtilization": {
       "Type": "AWS::Events::Rule",
-      "Condition": "EnableMemoryUtilizationCondition",
+      "Condition": "EnableEC2MetricsCondition",
       "Properties": {
         "ScheduleExpression": {"Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"},
         "State": "ENABLED",
@@ -340,7 +224,7 @@
     },
     "EventBridgeLambdaPermissionMemoryUtilization": {
       "Type": "AWS::Lambda::Permission",
-      "Condition": "EnableMemoryUtilizationCondition",
+      "Condition": "EnableEC2MetricsCondition",
       "Properties": {
         "FunctionName": {"Ref": "LambdaFunction"},
         "Action": "lambda:InvokeFunction",
@@ -348,59 +232,9 @@
         "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleMemoryUtilization", "Arn"]}
       }
     },
-    "EventBridgeRuleCPUReservation": {
-      "Type": "AWS::Events::Rule",
-      "Condition": "EnableCPUReservationCondition",
-      "Properties": {
-        "ScheduleExpression": {"Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"},
-        "State": "ENABLED",
-        "Targets": [
-          {
-            "Arn": {"Fn::GetAtt": ["LambdaFunction", "Arn"]},
-            "Id": "LambdaFunctionTargetCPUReservation",
-            "Input": "{\"service\": \"CPUReservation\"}"
-          }
-        ]
-      }
-    },
-    "EventBridgeLambdaPermissionCPUReservation": {
-      "Type": "AWS::Lambda::Permission",
-      "Condition": "EnableCPUReservationCondition",
-      "Properties": {
-        "FunctionName": {"Ref": "LambdaFunction"},
-        "Action": "lambda:InvokeFunction",
-        "Principal": "events.amazonaws.com",
-        "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleCPUReservation", "Arn"]}
-      }
-    },
-    "EventBridgeRuleMemoryReservation": {
-      "Type": "AWS::Events::Rule",
-      "Condition": "EnableMemoryReservationCondition",
-      "Properties": {
-        "ScheduleExpression": {"Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"},
-        "State": "ENABLED",
-        "Targets": [
-          {
-            "Arn": {"Fn::GetAtt": ["LambdaFunction", "Arn"]},
-            "Id": "LambdaFunctionTargetMemoryReservation",
-            "Input": "{\"service\": \"MemoryReservation\"}"
-          }
-        ]
-      }
-    },
-    "EventBridgeLambdaPermissionMemoryReservation": {
-      "Type": "AWS::Lambda::Permission",
-      "Condition": "EnableMemoryReservationCondition",
-      "Properties": {
-        "FunctionName": {"Ref": "LambdaFunction"},
-        "Action": "lambda:InvokeFunction",
-        "Principal": "events.amazonaws.com",
-        "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleMemoryReservation", "Arn"]}
-      }
-    },
     "EventBridgeRuleNetworkUtilization": {
       "Type": "AWS::Events::Rule",
-      "Condition": "EnableNetworkUtilizationCondition",
+      "Condition": "EnableEC2MetricsCondition",
       "Properties": {
         "ScheduleExpression": {"Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"},
         "State": "ENABLED",
@@ -415,7 +249,7 @@
     },
     "EventBridgeLambdaPermissionNetworkUtilization": {
       "Type": "AWS::Lambda::Permission",
-      "Condition": "EnableNetworkUtilizationCondition",
+      "Condition": "EnableEC2MetricsCondition",
       "Properties": {
         "FunctionName": {"Ref": "LambdaFunction"},
         "Action": "lambda:InvokeFunction",
@@ -425,7 +259,7 @@
     },
     "EventBridgeRuleVolumeIOPS": {
       "Type": "AWS::Events::Rule",
-      "Condition": "EnableVolumeIOPSCondition",
+      "Condition": "EnableEC2MetricsCondition",
       "Properties": {
         "ScheduleExpression": {"Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"},
         "State": "ENABLED",
@@ -440,7 +274,7 @@
     },
     "EventBridgeLambdaPermissionVolumeIOPS": {
       "Type": "AWS::Lambda::Permission",
-      "Condition": "EnableVolumeIOPSCondition",
+      "Condition": "EnableEC2MetricsCondition",
       "Properties": {
         "FunctionName": {"Ref": "LambdaFunction"},
         "Action": "lambda:InvokeFunction",
@@ -450,7 +284,7 @@
     },
     "EventBridgeRuleVolumeThroughput": {
       "Type": "AWS::Events::Rule",
-      "Condition": "EnableVolumeThroughputCondition",
+      "Condition": "EnableEC2MetricsCondition",
       "Properties": {
         "ScheduleExpression": {"Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"},
         "State": "ENABLED",
@@ -465,7 +299,7 @@
     },
     "EventBridgeLambdaPermissionVolumeThroughput": {
       "Type": "AWS::Lambda::Permission",
-      "Condition": "EnableVolumeThroughputCondition",
+      "Condition": "EnableEC2MetricsCondition",
       "Properties": {
         "FunctionName": {"Ref": "LambdaFunction"},
         "Action": "lambda:InvokeFunction",
@@ -473,254 +307,54 @@
         "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleVolumeThroughput", "Arn"]}
       }
     },
-    "EventBridgeRuleRDSCPUUtilization": {
+    "EventBridgeRuleCPUReservation": {
       "Type": "AWS::Events::Rule",
-      "Condition": "EnableRDSCPUUtilizationCondition",
+      "Condition": "EnableEC2MetricsCondition",
       "Properties": {
         "ScheduleExpression": {"Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"},
         "State": "ENABLED",
         "Targets": [
           {
             "Arn": {"Fn::GetAtt": ["LambdaFunction", "Arn"]},
-            "Id": "LambdaFunctionTargetRDSCPUUtilization",
-            "Input": "{\"service\": \"rds_cpu_utilization\"}"
+            "Id": "LambdaFunctionTargetCPUReservation",
+            "Input": "{\"service\": \"CPUReservation\"}"
           }
         ]
       }
     },
-    "EventBridgeLambdaPermissionRDSCPUUtilization": {
+    "EventBridgeLambdaPermissionCPUReservation": {
       "Type": "AWS::Lambda::Permission",
-      "Condition": "EnableRDSCPUUtilizationCondition",
+      "Condition": "EnableEC2MetricsCondition",
       "Properties": {
         "FunctionName": {"Ref": "LambdaFunction"},
         "Action": "lambda:InvokeFunction",
         "Principal": "events.amazonaws.com",
-        "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleRDSCPUUtilization", "Arn"]}
+        "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleCPUReservation", "Arn"]}
       }
     },
-    "EventBridgeRuleRDSDatabaseConnections": {
+    "EventBridgeRuleMemoryReservation": {
       "Type": "AWS::Events::Rule",
-      "Condition": "EnableRDSDatabaseConnectionsCondition",
+      "Condition": "EnableEC2MetricsCondition",
       "Properties": {
         "ScheduleExpression": {"Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"},
         "State": "ENABLED",
         "Targets": [
           {
             "Arn": {"Fn::GetAtt": ["LambdaFunction", "Arn"]},
-            "Id": "LambdaFunctionTargetRDSDatabaseConnections",
-            "Input": "{\"service\": \"rds_database_connections\"}"
+            "Id": "LambdaFunctionTargetMemoryReservation",
+            "Input": "{\"service\": \"MemoryReservation\"}"
           }
         ]
       }
     },
-    "EventBridgeLambdaPermissionRDSDatabaseConnections": {
+    "EventBridgeLambdaPermissionMemoryReservation": {
       "Type": "AWS::Lambda::Permission",
-      "Condition": "EnableRDSDatabaseConnectionsCondition",
+      "Condition": "EnableEC2MetricsCondition",
       "Properties": {
         "FunctionName": {"Ref": "LambdaFunction"},
         "Action": "lambda:InvokeFunction",
         "Principal": "events.amazonaws.com",
-        "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleRDSDatabaseConnections", "Arn"]}
-      }
-    },
-    "EventBridgeRuleRDSFreeableMemory": {
-      "Type": "AWS::Events::Rule",
-      "Condition": "EnableRDSFreeableMemoryCondition",
-      "Properties": {
-        "ScheduleExpression": {"Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"},
-        "State": "ENABLED",
-        "Targets": [
-          {
-            "Arn": {"Fn::GetAtt": ["LambdaFunction", "Arn"]},
-            "Id": "LambdaFunctionTargetRDSFreeableMemory",
-            "Input": "{\"service\": \"rds_freeable_memory\"}"
-          }
-        ]
-      }
-    },
-    "EventBridgeLambdaPermissionRDSFreeableMemory": {
-      "Type": "AWS::Lambda::Permission",
-      "Condition": "EnableRDSFreeableMemoryCondition",
-      "Properties": {
-        "FunctionName": {"Ref": "LambdaFunction"},
-        "Action": "lambda:InvokeFunction",
-        "Principal": "events.amazonaws.com",
-        "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleRDSFreeableMemory", "Arn"]}
-      }
-    },
-    "EventBridgeRuleRDSFreeStorageSpace": {
-      "Type": "AWS::Events::Rule",
-      "Condition": "EnableRDSFreeStorageSpaceCondition",
-      "Properties": {
-        "ScheduleExpression": {"Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"},
-        "State": "ENABLED",
-        "Targets": [
-          {
-            "Arn": {"Fn::GetAtt": ["LambdaFunction", "Arn"]},
-            "Id": "LambdaFunctionTargetRDSFreeStorageSpace",
-            "Input": "{\"service\": \"rds_free_storage_space\"}"
-          }
-        ]
-      }
-    },
-    "EventBridgeLambdaPermissionRDSFreeStorageSpace": {
-      "Type": "AWS::Lambda::Permission",
-      "Condition": "EnableRDSFreeStorageSpaceCondition",
-      "Properties": {
-        "FunctionName": {"Ref": "LambdaFunction"},
-        "Action": "lambda:InvokeFunction",
-        "Principal": "events.amazonaws.com",
-        "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleRDSFreeStorageSpace", "Arn"]}
-      }
-    },
-    "EventBridgeRuleRDSReadIOPS": {
-      "Type": "AWS::Events::Rule",
-      "Condition": "EnableRDSReadIOPSCondition",
-      "Properties": {
-        "ScheduleExpression": {"Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"},
-        "State": "ENABLED",
-        "Targets": [
-          {
-            "Arn": {"Fn::GetAtt": ["LambdaFunction", "Arn"]},
-            "Id": "LambdaFunctionTargetRDSReadIOPS",
-            "Input": "{\"service\": \"rds_read_iops\"}"
-          }
-        ]
-      }
-    },
-    "EventBridgeLambdaPermissionRDSReadIOPS": {
-      "Type": "AWS::Lambda::Permission",
-      "Condition": "EnableRDSReadIOPSCondition",
-      "Properties": {
-        "FunctionName": {"Ref": "LambdaFunction"},
-        "Action": "lambda:InvokeFunction",
-        "Principal": "events.amazonaws.com",
-        "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleRDSReadIOPS", "Arn"]}
-      }
-    },
-    "EventBridgeRuleRDSWriteIOPS": {
-      "Type": "AWS::Events::Rule",
-      "Condition": "EnableRDSWriteIOPSCondition",
-      "Properties": {
-        "ScheduleExpression": {"Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"},
-        "State": "ENABLED",
-        "Targets": [
-          {
-            "Arn": {"Fn::GetAtt": ["LambdaFunction", "Arn"]},
-        "Id": "LambdaFunctionTargetRDSWriteIOPS",
-            "Input": "{\"service\": \"rds_write_iops\"}"
-          }
-        ]
-      }
-    },
-    "EventBridgeLambdaPermissionRDSWriteIOPS": {
-      "Type": "AWS::Lambda::Permission",
-      "Condition": "EnableRDSWriteIOPSCondition",
-      "Properties": {
-        "FunctionName": {"Ref": "LambdaFunction"},
-        "Action": "lambda:InvokeFunction",
-        "Principal": "events.amazonaws.com",
-        "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleRDSWriteIOPS", "Arn"]}
-      }
-    },
-    "EventBridgeRuleRDSReadThroughput": {
-      "Type": "AWS::Events::Rule",
-      "Condition": "EnableRDSReadThroughputCondition",
-      "Properties": {
-        "ScheduleExpression": {"Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"},
-        "State": "ENABLED",
-        "Targets": [
-          {
-            "Arn": {"Fn::GetAtt": ["LambdaFunction", "Arn"]},
-            "Id": "LambdaFunctionTargetRDSReadThroughput",
-            "Input": "{\"service\": \"rds_read_throughput\"}"
-          }
-        ]
-      }
-    },
-    "EventBridgeLambdaPermissionRDSReadThroughput": {
-      "Type": "AWS::Lambda::Permission",
-      "Condition": "EnableRDSReadThroughputCondition",
-      "Properties": {
-        "FunctionName": {"Ref": "LambdaFunction"},
-        "Action": "lambda:InvokeFunction",
-        "Principal": "events.amazonaws.com",
-        "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleRDSReadThroughput", "Arn"]}
-      }
-    },
-    "EventBridgeRuleRDSWriteThroughput": {
-      "Type": "AWS::Events::Rule",
-      "Condition": "EnableRDSWriteThroughputCondition",
-      "Properties": {
-        "ScheduleExpression": {"Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"},
-        "State": "ENABLED",
-        "Targets": [
-          {
-            "Arn": {"Fn::GetAtt": ["LambdaFunction", "Arn"]},
-            "Id": "LambdaFunctionTargetRDSWriteThroughput",
-            "Input": "{\"service\": \"rds_write_throughput\"}"
-          }
-        ]
-      }
-    },
-    "EventBridgeLambdaPermissionRDSWriteThroughput": {
-      "Type": "AWS::Lambda::Permission",
-      "Condition": "EnableRDSWriteThroughputCondition",
-      "Properties": {
-        "FunctionName": {"Ref": "LambdaFunction"},
-        "Action": "lambda:InvokeFunction",
-        "Principal": "events.amazonaws.com",
-        "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleRDSWriteThroughput", "Arn"]}
-      }
-    },
-    "EventBridgeRuleRDSReplicaLag": {
-      "Type": "AWS::Events::Rule",
-      "Condition": "EnableRDSReplicaLagCondition",
-      "Properties": {
-        "ScheduleExpression": {"Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"},
-        "State": "ENABLED",
-        "Targets": [
-          {
-            "Arn": {"Fn::GetAtt": ["LambdaFunction", "Arn"]},
-            "Id": "LambdaFunctionTargetRDSReplicaLag",
-            "Input": "{\"service\": \"rds_replica_lag\"}"
-          }
-        ]
-      }
-    },
-    "EventBridgeLambdaPermissionRDSReplicaLag": {
-      "Type": "AWS::Lambda::Permission",
-      "Condition": "EnableRDSReplicaLagCondition",
-      "Properties": {
-        "FunctionName": {"Ref": "FunctionName"},
-        "Action": "lambda:InvokeFunction",
-        "Principal": "events.amazonaws.com",
-        "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleRDSReplicaLag", "Arn"]}
-      }
-    },
-    "EventBridgeRuleRDSAuroraCapacityUnits": {
-      "Type": "AWS::Events::Rule",
-      "Condition": "EnableRDSAuroraCapacityUnitsCondition",
-      "Properties": {
-        "ScheduleExpression": {"Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"},
-        "State": "ENABLED",
-        "Targets": [
-          {
-            "Arn": {"Fn::GetAtt": ["LambdaFunction", "Arn"]},
-            "Id": "LambdaFunctionTargetRDSAuroraCapacityUnits",
-            "Input": "{\"service\": \"rds_aurora_capacity_units\"}"
-          }
-        ]
-      }
-    },
-    "EventBridgeLambdaPermissionRDSAuroraCapacityUnits": {
-      "Type": "AWS::Lambda::Permission",
-      "Condition": "EnableRDSAuroraCapacityUnitsCondition",
-      "Properties": {
-        "FunctionName": {"Ref": "FunctionName"},
-        "Action": "lambda:InvokeFunction",
-        "Principal": "events.amazonaws.com",
-        "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleRDSAuroraCapacityUnits", "Arn"]}
+        "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleMemoryReservation", "Arn"]}
       }
     },
     "EventBridgeRuleCarbonFootprint": {
@@ -738,6 +372,16 @@
         ]
       }
     },
+    "EventBridgeLambdaPermissionCarbonFootprint": {
+      "Type": "AWS::Lambda::Permission",
+      "Condition": "EnableCarbonFootprintCondition",
+      "Properties": {
+        "FunctionName": {"Ref": "LambdaFunction"},
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleCarbonFootprint", "Arn"]}
+      }
+    },
     "EventBridgeRuleCloudFormation": {
       "Type": "AWS::Events::Rule",
       "Condition": "EnableCloudFormationCondition",
@@ -753,16 +397,6 @@
         ]
       }
     },
-    "EventBridgeLambdaPermissionCarbonFootprint": {
-      "Type": "AWS::Lambda::Permission",
-      "Condition": "EnableCarbonFootprintCondition",
-      "Properties": {
-        "FunctionName": {"Ref": "LambdaFunction"},
-        "Action": "lambda:InvokeFunction",
-        "Principal": "events.amazonaws.com",
-        "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleCarbonFootprint", "Arn"]}
-      }
-    },
     "EventBridgeLambdaPermissionCloudFormation": {
       "Type": "AWS::Lambda::Permission",
       "Condition": "EnableCloudFormationCondition",
@@ -771,6 +405,256 @@
         "Action": "lambda:InvokeFunction",
         "Principal": "events.amazonaws.com",
         "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleCloudFormation", "Arn"]}
+      }
+    },
+    "EventBridgeRuleRDSCPUUtilization": {
+      "Type": "AWS::Events::Rule",
+      "Condition": "EnableRDSMetricsCondition",
+      "Properties": {
+        "ScheduleExpression": {"Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"},
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {"Fn::GetAtt": ["LambdaFunction", "Arn"]},
+            "Id": "LambdaFunctionTargetRDSCPUUtilization",
+            "Input": "{\"service\": \"rds_cpu_utilization\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeLambdaPermissionRDSCPUUtilization": {
+      "Type": "AWS::Lambda::Permission",
+      "Condition": "EnableRDSMetricsCondition",
+      "Properties": {
+        "FunctionName": {"Ref": "LambdaFunction"},
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleRDSCPUUtilization", "Arn"]}
+      }
+    },
+    "EventBridgeRuleRDSDatabaseConnections": {
+      "Type": "AWS::Events::Rule",
+      "Condition": "EnableRDSMetricsCondition",
+      "Properties": {
+        "ScheduleExpression": {"Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"},
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {"Fn::GetAtt": ["LambdaFunction", "Arn"]},
+            "Id": "LambdaFunctionTargetRDSDatabaseConnections",
+            "Input": "{\"service\": \"rds_database_connections\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeLambdaPermissionRDSDatabaseConnections": {
+      "Type": "AWS::Lambda::Permission",
+      "Condition": "EnableRDSMetricsCondition",
+      "Properties": {
+        "FunctionName": {"Ref": "LambdaFunction"},
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleRDSDatabaseConnections", "Arn"]}
+      }
+    },
+    "EventBridgeRuleRDSFreeableMemory": {
+      "Type": "AWS::Events::Rule",
+      "Condition": "EnableRDSMetricsCondition",
+      "Properties": {
+        "ScheduleExpression": {"Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"},
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {"Fn::GetAtt": ["LambdaFunction", "Arn"]},
+            "Id": "LambdaFunctionTargetRDSFreeableMemory",
+            "Input": "{\"service\": \"rds_freeable_memory\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeLambdaPermissionRDSFreeableMemory": {
+      "Type": "AWS::Lambda::Permission",
+      "Condition": "EnableRDSMetricsCondition",
+      "Properties": {
+        "FunctionName": {"Ref": "LambdaFunction"},
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleRDSFreeableMemory", "Arn"]}
+      }
+    },
+    "EventBridgeRuleRDSFreeStorageSpace": {
+      "Type": "AWS::Events::Rule",
+      "Condition": "EnableRDSMetricsCondition",
+      "Properties": {
+        "ScheduleExpression": {"Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"},
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {"Fn::GetAtt": ["LambdaFunction", "Arn"]},
+            "Id": "LambdaFunctionTargetRDSFreeStorageSpace",
+            "Input": "{\"service\": \"rds_free_storage_space\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeLambdaPermissionRDSFreeStorageSpace": {
+      "Type": "AWS::Lambda::Permission",
+      "Condition": "EnableRDSMetricsCondition",
+      "Properties": {
+        "FunctionName": {"Ref": "LambdaFunction"},
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleRDSFreeStorageSpace", "Arn"]}
+      }
+    },
+    "EventBridgeRuleRDSReadIOPS": {
+      "Type": "AWS::Events::Rule",
+      "Condition": "EnableRDSMetricsCondition",
+      "Properties": {
+        "ScheduleExpression": {"Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"},
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {"Fn::GetAtt": ["LambdaFunction", "Arn"]},
+            "Id": "LambdaFunctionTargetRDSReadIOPS",
+            "Input": "{\"service\": \"rds_read_iops\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeLambdaPermissionRDSReadIOPS": {
+      "Type": "AWS::Lambda::Permission",
+      "Condition": "EnableRDSMetricsCondition",
+      "Properties": {
+        "FunctionName": {"Ref": "LambdaFunction"},
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleRDSReadIOPS", "Arn"]}
+      }
+    },
+    "EventBridgeRuleRDSWriteIOPS": {
+      "Type": "AWS::Events::Rule",
+      "Condition": "EnableRDSMetricsCondition",
+      "Properties": {
+        "ScheduleExpression": {"Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"},
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {"Fn::GetAtt": ["LambdaFunction", "Arn"]},
+            "Id": "LambdaFunctionTargetRDSWriteIOPS",
+            "Input": "{\"service\": \"rds_write_iops\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeLambdaPermissionRDSWriteIOPS": {
+      "Type": "AWS::Lambda::Permission",
+      "Condition": "EnableRDSMetricsCondition",
+      "Properties": {
+        "FunctionName": {"Ref": "LambdaFunction"},
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleRDSWriteIOPS", "Arn"]}
+      }
+    },
+    "EventBridgeRuleRDSReadThroughput": {
+      "Type": "AWS::Events::Rule",
+      "Condition": "EnableRDSMetricsCondition",
+      "Properties": {
+        "ScheduleExpression": {"Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"},
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {"Fn::GetAtt": ["LambdaFunction", "Arn"]},
+            "Id": "LambdaFunctionTargetRDSReadThroughput",
+            "Input": "{\"service\": \"rds_read_throughput\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeLambdaPermissionRDSReadThroughput": {
+      "Type": "AWS::Lambda::Permission",
+      "Condition": "EnableRDSMetricsCondition",
+      "Properties": {
+        "FunctionName": {"Ref": "LambdaFunction"},
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleRDSReadThroughput", "Arn"]}
+      }
+    },
+    "EventBridgeRuleRDSWriteThroughput": {
+      "Type": "AWS::Events::Rule",
+      "Condition": "EnableRDSMetricsCondition",
+      "Properties": {
+        "ScheduleExpression": {"Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"},
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {"Fn::GetAtt": ["LambdaFunction", "Arn"]},
+            "Id": "LambdaFunctionTargetRDSWriteThroughput",
+            "Input": "{\"service\": \"rds_write_throughput\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeLambdaPermissionRDSWriteThroughput": {
+      "Type": "AWS::Lambda::Permission",
+      "Condition": "EnableRDSMetricsCondition",
+      "Properties": {
+        "FunctionName": {"Ref": "LambdaFunction"},
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleRDSWriteThroughput", "Arn"]}
+      }
+    },
+    "EventBridgeRuleRDSReplicaLag": {
+      "Type": "AWS::Events::Rule",
+      "Condition": "EnableRDSMetricsCondition",
+      "Properties": {
+        "ScheduleExpression": {"Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"},
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {"Fn::GetAtt": ["LambdaFunction", "Arn"]},
+            "Id": "LambdaFunctionTargetRDSReplicaLag",
+            "Input": "{\"service\": \"rds_replica_lag\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeLambdaPermissionRDSReplicaLag": {
+      "Type": "AWS::Lambda::Permission",
+      "Condition": "EnableRDSMetricsCondition",
+      "Properties": {
+        "FunctionName": {"Ref": "LambdaFunction"},
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleRDSReplicaLag", "Arn"]}
+      }
+    },
+    "EventBridgeRuleRDSAuroraCapacityUnits": {
+      "Type": "AWS::Events::Rule",
+      "Condition": "EnableAuroraMetricsCondition",
+      "Properties": {
+        "ScheduleExpression": {"Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"},
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {"Fn::GetAtt": ["LambdaFunction", "Arn"]},
+            "Id": "LambdaFunctionTargetRDSAuroraCapacityUnits",
+            "Input": "{\"service\": \"rds_aurora_capacity_units\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeLambdaPermissionRDSAuroraCapacityUnits": {
+      "Type": "AWS::Lambda::Permission",
+      "Condition": "EnableAuroraMetricsCondition",
+      "Properties": {
+        "FunctionName": {"Ref": "LambdaFunction"},
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleRDSAuroraCapacityUnits", "Arn"]}
       }
     },
     "EventBridgeRuleS3": {
@@ -794,6 +678,22 @@
         ]
       }
     },
+    "EventBridgeLambdaPermissionS3": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "LambdaFunction"
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "EventBridgeRuleS3",
+            "Arn"
+          ]
+        }
+      }
+    },
     "EventBridgeRuleEC2": {
       "Type": "AWS::Events::Rule",
       "Properties": {
@@ -813,22 +713,6 @@
             "Input": "{\"service\": \"ec2\"}"
           }
         ]
-      }
-    },
-    "EventBridgeLambdaPermissionS3": {
-      "Type": "AWS::Lambda::Permission",
-      "Properties": {
-        "FunctionName": {
-          "Ref": "LambdaFunction"
-        },
-        "Action": "lambda:InvokeFunction",
-        "Principal": "events.amazonaws.com",
-        "SourceArn": {
-          "Fn::GetAtt": [
-            "EventBridgeRuleS3",
-            "Arn"
-          ]
-        }
       }
     },
     "EventBridgeLambdaPermissionEC2": {
