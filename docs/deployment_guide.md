@@ -6,22 +6,22 @@ This document outlines the steps to deploy the CloudSibyl AWS Data Collector fun
 
 - Docker installed and running
 - AWS CLI configured with appropriate credentials
-- Docker image `cloudsibyl-aws-datacollector:latest` built locally
+- Docker image `cloudsibyl-aws-data-collector:test` built locally
 
 ## Step 0: Test
 
 ```bash
 
-docker build -t cloudsibyl-aws-datacollector:test .
+docker build -t cloudsibyl-aws-data-collector:test .
 
 # Login to ECR in ca-central-1
 aws ecr get-login-password --region ca-central-1 | docker login --username AWS --password-stdin 767397677341.dkr.ecr.ca-central-1.amazonaws.com
 
 # Tag the image for ca-central-1
-docker tag cloudsibyl-aws-datacollector:test 767397677341.dkr.ecr.ca-central-1.amazonaws.com/cloudsibyl-aws-datacollector:test
+docker tag cloudsibyl-aws-data-collector:test 767397677341.dkr.ecr.ca-central-1.amazonaws.com/cloudsibyl-aws-data-collector:test
 
 # Push the image to ca-central-1
-docker push 767397677341.dkr.ecr.ca-central-1.amazonaws.com/cloudsibyl-aws-datacollector:test
+docker push 767397677341.dkr.ecr.ca-central-1.amazonaws.com/cloudsibyl-aws-data-collector:test
 ```
 
 ## Step 1: Set AWS Profile
@@ -36,7 +36,7 @@ export AWS_PROFILE=prod
 # Verify the profile is set
 aws sts get-caller-identity
 
-docker build -t cloudsibyl-aws-datacollector:latest .
+docker build -t cloudsibyl-aws-data-collector:latest .
 ```
 
 ## Step 2: Deploy to Different Regions
@@ -48,10 +48,10 @@ docker build -t cloudsibyl-aws-datacollector:latest .
 aws ecr get-login-password --region ca-central-1 | docker login --username AWS --password-stdin 767397677341.dkr.ecr.ca-central-1.amazonaws.com
 
 # Tag the image for ca-central-1
-docker tag cloudsibyl-aws-datacollector:latest 767397677341.dkr.ecr.ca-central-1.amazonaws.com/cloudsibyl-aws-datacollector:latest
+docker tag cloudsibyl-aws-data-collector:latest 767397677341.dkr.ecr.ca-central-1.amazonaws.com/cloudsibyl-aws-data-collector:latest
 
 # Push the image to ca-central-1
-docker push 767397677341.dkr.ecr.ca-central-1.amazonaws.com/cloudsibyl-aws-datacollector:latest
+docker push 767397677341.dkr.ecr.ca-central-1.amazonaws.com/cloudsibyl-aws-data-collector:latest
 ```
 
 ### US East (Ohio) - us-east-2
@@ -61,10 +61,10 @@ docker push 767397677341.dkr.ecr.ca-central-1.amazonaws.com/cloudsibyl-aws-datac
 aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 767397677341.dkr.ecr.us-east-2.amazonaws.com
 
 # Tag the image for us-east-2
-docker tag cloudsibyl-aws-datacollector:latest 767397677341.dkr.ecr.us-east-2.amazonaws.com/cloudsibyl-aws-datacollector:latest
+docker tag cloudsibyl-aws-data-collector:latest 767397677341.dkr.ecr.us-east-2.amazonaws.com/cloudsibyl-aws-data-collector:latest
 
 # Push the image to us-east-2
-docker push 767397677341.dkr.ecr.us-east-2.amazonaws.com/cloudsibyl-aws-datacollector:latest
+docker push 767397677341.dkr.ecr.us-east-2.amazonaws.com/cloudsibyl-aws-data-collector:latest
 ```
 
 ### US East (N. Virginia) - us-east-1
@@ -74,10 +74,10 @@ docker push 767397677341.dkr.ecr.us-east-2.amazonaws.com/cloudsibyl-aws-datacoll
 aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 767397677341.dkr.ecr.us-east-1.amazonaws.com
 
 # Tag the image for us-east-1
-docker tag cloudsibyl-aws-datacollector:latest 767397677341.dkr.ecr.us-east-1.amazonaws.com/cloudsibyl-aws-datacollector:latest
+docker tag cloudsibyl-aws-data-collector:latest 767397677341.dkr.ecr.us-east-1.amazonaws.com/cloudsibyl-aws-data-collector:latest
 
 # Push the image to us-east-1
-docker push 767397677341.dkr.ecr.us-east-1.amazonaws.com/cloudsibyl-aws-datacollector:latest
+docker push 767397677341.dkr.ecr.us-east-1.amazonaws.com/cloudsibyl-aws-data-collector:latest
 ```
 
 ## Step 3: Verify Deployment
@@ -91,9 +91,9 @@ aws ecr describe-repositories --region us-east-2
 aws ecr describe-repositories --region us-east-1
 
 # List images in each repository
-aws ecr describe-images --repository-name cloudsibyl-aws-datacollector --region ca-central-1
-aws ecr describe-images --repository-name cloudsibyl-aws-datacollector --region us-east-2
-aws ecr describe-images --repository-name cloudsibyl-aws-datacollector --region us-east-1
+aws ecr describe-images --repository-name cloudsibyl-aws-data-collector --region ca-central-1
+aws ecr describe-images --repository-name cloudsibyl-aws-data-collector --region us-east-2
+aws ecr describe-images --repository-name cloudsibyl-aws-data-collector --region us-east-1
 ```
 
 ## Automated Deployment Script
@@ -118,10 +118,10 @@ for region in "${regions[@]}"; do
     aws ecr get-login-password --region $region | docker login --username AWS --password-stdin 767397677341.dkr.ecr.$region.amazonaws.com
     
     # Tag image
-    docker tag cloudsibyl-aws-datacollector:latest 767397677341.dkr.ecr.$region.amazonaws.com/cloudsibyl-aws-datacollector:latest
+    docker tag cloudsibyl-aws-data-collector:latest 767397677341.dkr.ecr.$region.amazonaws.com/cloudsibyl-aws-data-collector:latest
     
     # Push image
-    docker push 767397677341.dkr.ecr.$region.amazonaws.com/cloudsibyl-aws-datacollector:latest
+    docker push 767397677341.dkr.ecr.$region.amazonaws.com/cloudsibyl-aws-data-collector:latest
     
     echo "Deployment to $region completed"
 done

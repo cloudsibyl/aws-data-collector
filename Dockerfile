@@ -4,8 +4,8 @@ FROM public.ecr.aws/lambda/python:3.12
 # Set working directory
 WORKDIR /var/task
 
-# Set environment variables
-ENV PYTHONPATH=/var/task
+# Set environment variables - FIX: Set PYTHONPATH to include src directory
+ENV PYTHONPATH=/var/task/src
 ENV AWS_DEFAULT_REGION=ca-central-1
 ENV OUTPUT_PATH=/tmp
 
@@ -19,10 +19,8 @@ COPY requirements.txt ./
 RUN python3 -m pip install --upgrade pip
 RUN python3 -m pip install -r requirements.txt --target "${LAMBDA_TASK_ROOT}"
 
-# Copy source code
-COPY src/ ./src/
-COPY pyproject.toml ./
-COPY README.md ./
+# Copy source code - FIX: Copy to the correct location
+COPY src/ /var/task/src/
 
 # Copy any additional Python files that might be needed
 COPY *.py ./
