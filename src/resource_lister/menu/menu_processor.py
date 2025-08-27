@@ -328,15 +328,15 @@ def process_paginatio_attributes(process_config):
     if "pagination_attributes" in process_config.keys():
         refined_pagination_attributes = {}
         for pagination_attribute in process_config["pagination_attributes"]:
+            # Skip interactive input in Lambda environment
             if pagination_attribute["is_visible"].upper() == "YES":
-                pagination_attribute_value = input(
-                    "{} HERE--> ".format(pagination_attribute["display_prompt"])).strip()
-                if pagination_attribute_value == "-1":
-                    process_config = None
-                    break
-                else:
+                # Use default value or skip for Lambda
+                if "attribute_value" in pagination_attribute:
                     refined_pagination_attributes[pagination_attribute["attribute_name"]
-                                                  ] = pagination_attribute_value
+                                                  ] = pagination_attribute["attribute_value"]
+                else:
+                    # Skip this attribute if no default value
+                    continue
             else:
                 refined_pagination_attributes[pagination_attribute["attribute_name"]
                                               ] = pagination_attribute["attribute_value"]
@@ -351,7 +351,7 @@ def validate_menu(menu_item, menu_list):
         valid_menu_item = menu_item
     # This if user enters number as option like 1,2
     else:
-        if menu_item. isdigit():
+        if menu_item.isdigit():
             menu_item_index = int(menu_item)-1
             if menu_item_index <= len(menu_list):
                 valid_menu_item = menu_list[menu_item_index]["menu_index"]

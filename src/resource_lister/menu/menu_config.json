@@ -762,23 +762,23 @@
             "validation_functions": ""
         },
         {
-            "menu_index": "cloudwatch_list_dasboards",
-            "menu_help": "List of Cloudwatch Dashboards",
-            "is_multi_account_support": "yes",
-            "is_regional": "yes",
-            "service_name": "cloudwatch",
-            "function_name": "list_dashboards",
-            "implclass": "_regional_paginate",
-            "implfunction": "process",
-            "validation_functions": ""
-        },
-        {
             "menu_index": "cloudwatch_list_metrics",
             "menu_help": "List of Cloudwatch Metrics",
             "is_multi_account_support": "yes",
             "is_regional": "yes",
             "service_name": "cloudwatch",
             "function_name": "list_metrics",
+            "implclass": "_regional_paginate",
+            "implfunction": "process",
+            "validation_functions": ""
+        },
+        {
+            "menu_index": "cloudwatch_list_dasboards",
+            "menu_help": "List of Cloudwatch Dashboards",
+            "is_multi_account_support": "yes",
+            "is_regional": "yes",
+            "service_name": "cloudwatch",
+            "function_name": "list_dashboards",
             "implclass": "_regional_paginate",
             "implfunction": "process",
             "validation_functions": ""

@@ -232,7 +232,7 @@
         "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleMemoryUtilization", "Arn"]}
       }
     },
-    "EventBridgeRuleNetworkUtilization": {
+    "EventBridgeRuleNetworkIn": {
       "Type": "AWS::Events::Rule",
       "Condition": "EnableEC2MetricsCondition",
       "Properties": {
@@ -241,20 +241,95 @@
         "Targets": [
           {
             "Arn": {"Fn::GetAtt": ["LambdaFunction", "Arn"]},
-            "Id": "LambdaFunctionTargetNetworkUtilization",
-            "Input": "{\"service\": \"NetworkUtilization\"}"
+            "Id": "LambdaFunctionTargetNetworkIn",
+            "Input": "{\"service\": \"network_in\"}"
           }
         ]
       }
     },
-    "EventBridgeLambdaPermissionNetworkUtilization": {
+    "EventBridgeLambdaPermissionNetworkIn": {
       "Type": "AWS::Lambda::Permission",
       "Condition": "EnableEC2MetricsCondition",
       "Properties": {
         "FunctionName": {"Ref": "LambdaFunction"},
         "Action": "lambda:InvokeFunction",
         "Principal": "events.amazonaws.com",
-        "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleNetworkUtilization", "Arn"]}
+        "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleNetworkIn", "Arn"]}
+      }
+    },
+    "EventBridgeRuleNetworkOut": {
+      "Type": "AWS::Events::Rule",
+      "Condition": "EnableEC2MetricsCondition",
+      "Properties": {
+        "ScheduleExpression": {"Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"},
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {"Fn::GetAtt": ["LambdaFunction", "Arn"]},
+            "Id": "LambdaFunctionTargetNetworkOut",
+            "Input": "{\"service\": \"network_out\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeLambdaPermissionNetworkOut": {
+      "Type": "AWS::Lambda::Permission",
+      "Condition": "EnableEC2MetricsCondition",
+      "Properties": {
+        "FunctionName": {"Ref": "LambdaFunction"},
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleNetworkOut", "Arn"]}
+      }
+    },
+    "EventBridgeRuleNetworkPacketsIn": {
+      "Type": "AWS::Events::Rule",
+      "Condition": "EnableEC2MetricsCondition",
+      "Properties": {
+        "ScheduleExpression": {"Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"},
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {"Fn::GetAtt": ["LambdaFunction", "Arn"]},
+            "Id": "LambdaFunctionTargetNetworkPacketsIn",
+            "Input": "{\"service\": \"network_packets_in\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeLambdaPermissionNetworkPacketsIn": {
+      "Type": "AWS::Lambda::Permission",
+      "Condition": "EnableEC2MetricsCondition",
+      "Properties": {
+        "FunctionName": {"Ref": "LambdaFunction"},
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleNetworkPacketsIn", "Arn"]}
+      }
+    },
+    "EventBridgeRuleNetworkPacketsOut": {
+      "Type": "AWS::Events::Rule",
+      "Condition": "EnableEC2MetricsCondition",
+      "Properties": {
+        "ScheduleExpression": {"Fn::Sub": "cron(0 ${ScheduleHour} * * ? *)"},
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {"Fn::GetAtt": ["LambdaFunction", "Arn"]},
+            "Id": "LambdaFunctionTargetNetworkPacketsOut",
+            "Input": "{\"service\": \"network_packets_out\"}"
+          }
+        ]
+      }
+    },
+    "EventBridgeLambdaPermissionNetworkPacketsOut": {
+      "Type": "AWS::Lambda::Permission",
+      "Condition": "EnableEC2MetricsCondition",
+      "Properties": {
+        "FunctionName": {"Ref": "LambdaFunction"},
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {"Fn::GetAtt": ["EventBridgeRuleNetworkPacketsOut", "Arn"]}
       }
     },
     "EventBridgeRuleVolumeIOPS": {
