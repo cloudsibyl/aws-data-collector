@@ -72,7 +72,8 @@ def lambda_handler(event, context):
                 'network_in', 'network_out', 'network_packets_in', 'network_packets_out', 'VolumeIOPS', 'VolumeThroughput', 'carbon_footprint', 
                 'CPUReservation', 'MemoryReservation', 'rds_read_throughput', 'rds_write_throughput',
                 'rds_replica_lag', 'rds_aurora_capacity_units', 'rds_cpu_utilization', 
-                'rds_freeable_memory', 'rds_database_connections', 'rds_free_storage_space']
+                'rds_freeable_memory', 'rds_database_connections', 'rds_free_storage_space',
+                'rds_read_iops', 'rds_write_iops']
     
     logger.info(f"Supported services: {services}")
     
@@ -180,36 +181,44 @@ def lambda_handler(event, context):
         result = execute_resource_lister(generate_commands('cloudwatch', '14'))
         results[service] = result if result else "Failed to execute"
     elif service == 'rds_read_throughput':
-        logger.info("Processing rds_read_throughput service (cloudwatch option 15)")
-        result = execute_resource_lister(generate_commands('cloudwatch', '15'))
-        results[service] = result if result else "Failed to execute"
-    elif service == 'rds_write_throughput':
-        logger.info("Processing rds_write_throughput service (cloudwatch option 16)")
-        result = execute_resource_lister(generate_commands('cloudwatch', '16'))
-        results[service] = result if result else "Failed to execute"
-    elif service == 'rds_replica_lag':
-        logger.info("Processing rds_replica_lag service (cloudwatch option 17)")
-        result = execute_resource_lister(generate_commands('cloudwatch', '17'))
-        results[service] = result if result else "Failed to execute"
-    elif service == 'rds_aurora_capacity_units':
-        logger.info("Processing rds_aurora_capacity_units service (cloudwatch option 18)")
-        result = execute_resource_lister(generate_commands('cloudwatch', '18'))
-        results[service] = result if result else "Failed to execute"
-    elif service == 'rds_cpu_utilization':
-        logger.info("Processing rds_cpu_utilization service (cloudwatch option 19)")
-        result = execute_resource_lister(generate_commands('cloudwatch', '19'))
-        results[service] = result if result else "Failed to execute"
-    elif service == 'rds_freeable_memory':
-        logger.info("Processing rds_freeable_memory service (cloudwatch option 20)")
-        result = execute_resource_lister(generate_commands('cloudwatch', '20'))
-        results[service] = result if result else "Failed to execute"
-    elif service == 'rds_database_connections':
-        logger.info("Processing rds_database_connections service (cloudwatch option 21)")
+        logger.info("Processing rds_read_throughput service (cloudwatch option 21)")
         result = execute_resource_lister(generate_commands('cloudwatch', '21'))
         results[service] = result if result else "Failed to execute"
-    elif service == 'rds_free_storage_space':
-        logger.info("Processing rds_free_storage_space service (cloudwatch option 22)")
+    elif service == 'rds_write_throughput':
+        logger.info("Processing rds_write_throughput service (cloudwatch option 22)")
         result = execute_resource_lister(generate_commands('cloudwatch', '22'))
+        results[service] = result if result else "Failed to execute"
+    elif service == 'rds_replica_lag':
+        logger.info("Processing rds_replica_lag service (cloudwatch option 23)")
+        result = execute_resource_lister(generate_commands('cloudwatch', '23'))
+        results[service] = result if result else "Failed to execute"
+    elif service == 'rds_aurora_capacity_units':
+        logger.info("Processing rds_aurora_capacity_units service (cloudwatch option 24)")
+        result = execute_resource_lister(generate_commands('cloudwatch', '24'))
+        results[service] = result if result else "Failed to execute"
+    elif service == 'rds_cpu_utilization':
+        config = generate_commands('cloudwatch', '15')
+        result = execute_resource_lister(config)
+        results[service] = result if result else "Failed to execute"
+    elif service == 'rds_freeable_memory':
+        logger.info("Processing rds_freeable_memory service (cloudwatch option 17)")
+        result = execute_resource_lister(generate_commands('cloudwatch', '17'))
+        results[service] = result if result else "Failed to execute"
+    elif service == 'rds_database_connections':
+        logger.info("Processing rds_database_connections service (cloudwatch option 16)")
+        result = execute_resource_lister(generate_commands('cloudwatch', '16'))
+        results[service] = result if result else "Failed to execute"
+    elif service == 'rds_free_storage_space':
+        logger.info("Processing rds_free_storage_space service (cloudwatch option 18)")
+        result = execute_resource_lister(generate_commands('cloudwatch', '18'))
+        results[service] = result if result else "Failed to execute"
+    elif service == 'rds_read_iops':
+        logger.info("Processing rds_read_iops service (cloudwatch option 19)")
+        result = execute_resource_lister(generate_commands('cloudwatch', '19'))
+        results[service] = result if result else "Failed to execute"
+    elif service == 'rds_write_iops':
+        logger.info("Processing rds_write_iops service (cloudwatch option 20)")
+        result = execute_resource_lister(generate_commands('cloudwatch', '20'))
         results[service] = result if result else "Failed to execute"
     else:
         logger.info(f"Processing {service} service with default option 1")
@@ -218,6 +227,15 @@ def lambda_handler(event, context):
     
     logger.info(f"Final results: {list(results.keys())}")
     logger.info(f"Results summary: {len([r for r in results.values() if r != 'Failed to execute'])} successful, {len([r for r in results.values() if r == 'Failed to execute'])} failed")
+    
+    # Log detailed results for debugging
+    for service_name, result in results.items():
+        if result == "Failed to execute":
+            logger.error(f"Service {service_name} failed to execute")
+        else:
+            logger.info(f"Service {service_name} completed successfully with output length: {len(result) if result else 0}")
+            if result and len(result) < 3000 and "DISCLAIMER" in result:
+                logger.warning(f"Service {service_name} output appears to be mostly disclaimer text")
     
     return {
         "statusCode": 200 if all(results.values()) else 400,

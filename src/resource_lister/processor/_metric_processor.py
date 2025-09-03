@@ -42,10 +42,32 @@ def process(process_config):
     if intances:
         object_list = []
         for intance in intances:
-            metric_parameters["MetricName"] = function_name
+            # Map function names to actual AWS metric names for RDS
+            if metric_parameters["Namespace"] == "AWS/RDS":
+                metric_name_mapping = {
+                    "rds_cpu_utilization": "CPUUtilization",
+                    "rds_database_connections": "DatabaseConnections", 
+                    "rds_freeable_memory": "FreeableMemory",
+                    "rds_free_storage_space": "FreeStorageSpace",
+                    "rds_read_iops": "ReadIOPS",
+                    "rds_write_iops": "WriteIOPS",
+                    "rds_read_throughput": "ReadThroughput",
+                    "rds_write_throughput": "WriteThroughput",
+                    "rds_replica_lag": "ReplicaLag",
+                    "rds_aurora_capacity_units": "ServerlessDatabaseCapacity"
+                }
+                actual_metric_name = metric_name_mapping.get(function_name, function_name)
+                logger.info(f"DEBUG: Mapping function_name '{function_name}' to metric_name '{actual_metric_name}'")
+            else:
+                actual_metric_name = function_name
+            
+            metric_parameters["MetricName"] = actual_metric_name
             metric_parameters["Dimensions"] = [{"Name": dimension_name, "Value": intance}]
             object_list.extend(process_metrics(accounts, regions, service_name, function_name, intance, metric_parameters, current_date))
         process_result(process_config, service_response_formatter(service_name, function_name, object_list, attributes))
+    else:
+        logger.info(f"DEBUG: No {metric_parameters['Namespace']} instances found, processing empty result")
+        process_result(process_config, service_response_formatter(service_name, function_name, [], attributes))
 
 def get_instance_ids(accounts, regions):
     instance_ids = []
@@ -149,18 +171,23 @@ def get_rds_instance_ids(accounts, regions):
                 if len(rds_instance_ids) >= 60:
                     return rds_instance_ids[:60]
             except Exception as exc:
-                logger.error(exc)
+                logger.error(f"DEBUG: Exception in get_rds_instance_ids: {exc}")
     return rds_instance_ids[:60]
 
 def fetch_rds_instance_ids(session, region):
-    rds_client = session.client("rds", config=Config(region_name=region))
-    paginator = rds_client.get_paginator("describe_db_instances")
-    rds_instance_ids = []
-    for page in paginator.paginate():
-        for instance in page['DBInstances']:
-            rds_instance_ids.append(instance['DBInstanceIdentifier'])
-            if len(rds_instance_ids) >= 60:
-                return rds_instance_ids
+    try:
+        rds_client = session.client("rds", config=Config(region_name=region))
+        paginator = rds_client.get_paginator("describe_db_instances")
+        rds_instance_ids = []
+        
+        for page in paginator.paginate():
+            for instance in page['DBInstances']:
+                instance_id = instance['DBInstanceIdentifier']
+                rds_instance_ids.append(instance_id)
+                if len(rds_instance_ids) >= 60:
+                    return rds_instance_ids
+    except Exception as e:
+        logger.error(f"DEBUG: Exception in fetch_rds_instance_ids: {e}")
     return rds_instance_ids
 
 def fetch_volume_ids(session, region):
@@ -202,15 +229,22 @@ def fetch_metrics(session, region, account, service_name, function_name, intance
     result = dict()
     object_list = []
     cw_client = session.client("cloudwatch", config=Config(region_name=region))
-    response = cw_client.get_metric_statistics(
-        Namespace=metric_parameters["Namespace"],
-        MetricName=metric_parameters["MetricName"],
-        Dimensions=metric_parameters["Dimensions"],
-        StartTime=datetime.datetime.utcnow() - datetime.timedelta(hours=24),
-        EndTime=datetime.datetime.utcnow(),
-        Period=metric_parameters["Period"],
-        Statistics=metric_parameters["Statistics"]
-    )
+    
+    try:
+        logger.info(f"DEBUG: Calling get_metric_statistics with MetricName={metric_parameters['MetricName']}, Namespace={metric_parameters['Namespace']}")
+        response = cw_client.get_metric_statistics(
+            Namespace=metric_parameters["Namespace"],
+            MetricName=metric_parameters["MetricName"],
+            Dimensions=metric_parameters["Dimensions"],
+            StartTime=datetime.datetime.utcnow() - datetime.timedelta(hours=24),
+            EndTime=datetime.datetime.utcnow(),
+            Period=metric_parameters["Period"],
+            Statistics=metric_parameters["Statistics"]
+        )
+    except Exception as e:
+        logger.error(f"DEBUG: Exception in fetch_metrics for {intance}: {e}")
+        response = {'Datapoints': []}
+    
     result['prefix_columns'] = prefix_columns
     result['result'] = [{'Datapoints': response['Datapoints']}]
     return result
